@@ -89,14 +89,23 @@ object ParserFns {
       c: Token,
       optionP: Option[Token]
   ): (Option[Expression], Seq[ParserError]) = {
-
+    p.callN += 1
     val (optionC, nextOptionP) = p.getTokenPointers
+    println(
+      s"${p.callTabs} parsePrefixExpression Input (c, op, nc, np) - ",
+      c,
+      optionP,
+      optionC,
+      nextOptionP
+    )
     optionC match {
       case Some(token) =>
         p.parseExpression(ExpressionOrdering.Prefix, token, nextOptionP) match {
           case (Some(expression), errors) =>
+            p.callN -= 1
             (Some(PrefixExpression(c, c.literal, expression)), errors)
           case (None, errors: Seq[ParserError]) =>
+            p.callN -= 1
             (
               None,
               errors :+ ParserError(
@@ -154,11 +163,7 @@ object ParserFns {
       case (None, _) =>
         (
           None,
-          Seq(
-            ParserError(
-              s"No next token for infix operation (${left.string}${c.literal}...)"
-            )
-          )
+          Seq.empty[ParserError]
         )
     }
 

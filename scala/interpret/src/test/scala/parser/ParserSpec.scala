@@ -146,6 +146,37 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
     }
   }
 
+  "ExpressionParser - Infix Operator String Parser" should "Output the strings correctly" in {
+
+    val prefixTests: Seq[(String, String)] = Seq(
+      //("-a * b", "((-a) * b)"),
+      ("!-a;", "(!(-a))"),
+      ("a + b + c", "((a + b) + c)"),
+      ("a + b - c", "((a + b) - c)"),
+      ("a * b * c", "((a * b) * c)"),
+      ("a * b / c", "((a * b) / c)"),
+      ("a + b / c", "(a + (b / c))"),
+      ("a + b * c + d / e - f", "(((a + (b * c)) + (d / e)) - f)"),
+      ("3 + 4; -5 * 5", "(3 + 4)((-5) * 5)"),
+      ("5 > 4 == 3 < 4", "((5 > 4) == (3 < 4))"),
+      ("5 < 4 != 3 > 4", "((5 < 4) != (3 > 4))"),
+      (
+        "3 + 4 * 5 == 3 * 1 + 4 * 5",
+        "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))"
+      )
+    )
+
+    prefixTests.foreach { case (input: String, output: String) =>
+      val l = Lexer(input).next
+      val p = Parser(l)
+      println(s"evaluation of $input...")
+      val (program, errors) = p.parseProgram
+      errors shouldBe Matchers.empty
+      program.string shouldEqual output
+      println("ok")
+    }
+  }
+
   "ExpressionParser - Infix Operators" should "Be correctly parsed" in {
 
     val prefixTests: Seq[(String, BigInt, String, BigInt)] = Seq(
