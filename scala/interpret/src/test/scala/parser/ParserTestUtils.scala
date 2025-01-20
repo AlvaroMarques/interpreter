@@ -31,12 +31,12 @@ trait ParserTestUtils {
   }
 
   def testBooleanLiteral(input: String, expectedValue: Boolean): Unit = {
-    val l = Lexer(input)
+    val l = Lexer(input).next
     val p = Parser(l)
-    val program = p.parseProgram()
+    val (program: Program, errors: Seq[ParserError]) = p.parseProgram
 
     program.statements.length shouldBe 1
-    p.errors shouldBe Matchers.empty
+    errors shouldBe Matchers.empty
     program.statements.head match {
       case stmt: ExpressionStatement =>
         stmt.expression match {
@@ -51,12 +51,12 @@ trait ParserTestUtils {
   }
 
   def testIdentifier(input: String, expectedValue: String): Unit = {
-    val l = Lexer(input)
+    val l = Lexer(input).next
     val p = Parser(l)
-    val program = p.parseProgram()
+    val (program: Program, errors: Seq[ParserError]) = p.parseProgram
 
-    program.statements.length shouldBe 1
-    p.errors shouldBe Matchers.empty
+    assert(program.statements.length == 1)
+    errors shouldBe Matchers.empty
     program.statements.head match {
       case stmt: ExpressionStatement =>
         stmt.expression match {
@@ -71,12 +71,11 @@ trait ParserTestUtils {
   }
 
   def testIntegerLiteral(input: String, expectedValue: BigInt): Unit = {
-    val l = Lexer(input)
+    val l = Lexer(input).next
     val p = Parser(l)
-    val program = p.parseProgram()
+    val (program: Program, errors: Seq[ParserError]) = p.parseProgram
 
-    program.statements.length shouldBe 1
-    p.errors shouldBe Matchers.empty
+    assert(program.statements.length == 1)
     program.statements.head match {
       case stmt: ExpressionStatement =>
         stmt.expression match {
@@ -89,4 +88,5 @@ trait ParserTestUtils {
       case _ => fail("Statement is not an expression statement")
     }
   }
+
 }
