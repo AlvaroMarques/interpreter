@@ -293,8 +293,8 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
     val l = Lexer(input)
     val p = Parser(l)
     val program = p.parseProgram()
-    println(p.errors.mkString("\n"))
-    println(program.string)
+    p.errors shouldBe Matchers.empty
+    program.string shouldEqual "if (x < y)  { x }"
   }
 
   "IfElse Expressions" should "be correctly parsed" in {
@@ -302,8 +302,8 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
     val l = Lexer(input)
     val p = Parser(l)
     val program = p.parseProgram()
-    println(p.errors.mkString("\n"))
-    println(program.string)
+    p.errors shouldBe Matchers.empty
+    program.string shouldEqual "if (x < y)  { let y = (x + 1);return 5; } else { return y; }"
   }
 
 }
