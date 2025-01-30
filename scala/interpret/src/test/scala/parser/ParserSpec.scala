@@ -306,4 +306,13 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
     program.string shouldEqual "if (x < y)  { let y = (x + 1);return 5; } else { return y; }"
   }
 
+  "Function Expressions" should "be correctly parsed" in {
+    val input = "fn(x, y) { x + y; }"
+    val l = Lexer(input)
+    val p = Parser(l)
+    val program = p.parseProgram()
+    println(program.string)
+    p.errors shouldBe Matchers.empty
+  }
+
 }
