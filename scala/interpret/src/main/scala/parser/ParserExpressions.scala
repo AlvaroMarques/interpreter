@@ -20,7 +20,8 @@ trait ParserExpressions {
     TokenType.LPAREN -> parseGroupedExpression,
     TokenType.MINUS -> parsePrefixExpression,
     TokenType.TRUE -> parseBoolean,
-    TokenType.IF -> parseIfExpression
+    TokenType.IF -> parseIfExpression,
+    TokenType.FUNCTION -> parseFunctionExpression
   )
   final val infixParserFns: Map[TokenType, InfixParserFn] = Map(
     (TokenType.PLUS, parseInfixExpression),
@@ -54,6 +55,10 @@ trait ParserExpressions {
       nextTokens()
     }
     Some(Identifier(EOFToken, ""))
+  }
+
+  def parseFunctionExpression(): Option[FunctionLiteral] = {
+    None
   }
 
   def parseInfixExpression(
