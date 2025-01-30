@@ -57,8 +57,28 @@ trait ParserExpressions {
     Some(Identifier(EOFToken, ""))
   }
 
-  def parseFunctionExpression(): Option[FunctionLiteral] = {
+  def parseFunctionParameters(): Option[Seq[Identifier]] = {
     None
+  }
+
+  def parseFunctionExpression(): Option[FunctionLiteral] = {
+    parser.cToken match {
+      case Some(token) =>
+        if (expectPeek(LPAREN)) {
+          parseFunctionParameters() match {
+            case Some(parameters) =>
+              parser.parseBlockStatement() match {
+                case Some(body) =>
+                  Some(FunctionLiteral(token, parameters, body))
+                case _ => None
+              }
+            case _ => None
+          }
+        } else {
+          None
+        }
+      case _ => None
+    }
   }
 
   def parseInfixExpression(
