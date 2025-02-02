@@ -10,7 +10,7 @@ case class LetStatement(token: Token, name: Identifier, value: Expression)
   override def tokenLiteral: String = token.literal
 
   override def string: String = {
-    s"$tokenLiteral ${name.value} = ${value.string};"
+    s"$tokenLiteral ${name.value} = ${value.string}"
   }
 
 }

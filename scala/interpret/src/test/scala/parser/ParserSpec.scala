@@ -307,7 +307,16 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
   }
 
   "Function Expressions" should "be correctly parsed" in {
-    val input = "fn(x, y) { x + y; x + 5; let y = x + 10; } " // { x + y; }"
+    val input = "fn(x, y) { x + y; x + 5; let y = x + 10; }"
+    val l = Lexer(input)
+    val p = Parser(l)
+    val program = p.parseProgram()
+    println(program.string)
+    p.errors shouldBe Matchers.empty
+  }
+
+  "Function Expressions" should "work, even if there are no arguments" in {
+    val input = "fn() { x + y; x + 5; let y = x + 10; fn() { x } ; }"
     val l = Lexer(input)
     val p = Parser(l)
     val program = p.parseProgram()
