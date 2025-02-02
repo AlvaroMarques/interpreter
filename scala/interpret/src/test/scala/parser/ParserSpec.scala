@@ -328,4 +328,13 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
     p.errors shouldBe Matchers.empty
   }
 
+  "Call Expressions" should "be correctly parsed" in {
+    val input = "add(1, 5);"
+    val l = Lexer(input)
+    val p = Parser(l)
+    val program = p.parseProgram()
+    println(program.string)
+    p.errors shouldBe Matchers.empty
+  }
+
 }
