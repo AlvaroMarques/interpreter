@@ -13,6 +13,6 @@ case class CallExpression(
   override def tokenLiteral: String = token.literal
 
   override def string: String = {
-    s"${function.string} (${arguments.map(_.string).mkString(",")})"
+    s"${function.string}(${arguments.map(_.string).mkString(", ")});"
   }
 }

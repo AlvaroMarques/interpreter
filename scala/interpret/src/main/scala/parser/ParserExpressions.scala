@@ -176,7 +176,55 @@ trait ParserExpressions {
     leftExp
   }
 
-  def parseCallExpression(expression: Expression): Option[Expression] = None
+  def parseCallArguments: Option[Seq[Expression]] = {
+    logger.debug(s"Parse Call arguments - ($cToken, $pToken)")
+    (cToken, pToken) match {
+      case (Some(Token(LPAREN, _)), Some(Token(RPAREN, _))) =>
+        parser.nextTokens()
+        Some(Seq.empty[Expression])
+      case (Some(Token(LPAREN, _)), Some(_)) =>
+        var arguments = Seq.empty[Expression]
+        parser.nextTokens()
+        parser.parseExpression(Lowest) match {
+          case Some(expression) =>
+            arguments :+= expression
+            while (
+              pToken match {
+                case Some(Token(COMMA, _)) => true
+                case _                     => false
+              }
+            ) {
+              parser.nextTokens()
+              parser.nextTokens()
+              parser.parseExpression(Lowest) match {
+                case Some(expression) =>
+                  arguments :+= expression
+                case _ =>
+              }
+            }
+            if (!parser.expectPeek(RPAREN)) {
+              None
+            } else {
+              Some(arguments)
+            }
+        }
+      case _ => None
+    }
+  }
+  def parseCallExpression(function: Expression): Option[CallExpression] = {
+    parser.cToken match {
+      case Some(cToken) =>
+        parseCallArguments match {
+          case Some(arguments) =>
+            logger.debug(
+              s"Call Expression with $cToken, $function and $arguments"
+            )
+            Some(CallExpression(cToken, function, arguments))
+          case None => None
+        }
+      case _ => None
+    }
+  }
 
   def peekPrecedence: ExpressionOrdering =
     precedence.getOrElse(pToken.getOrElse(EOFToken).tokenType, Lowest)

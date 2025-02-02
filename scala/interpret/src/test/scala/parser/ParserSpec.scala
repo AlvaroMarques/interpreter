@@ -330,9 +330,9 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
 
   "Call Expressions" should "be correctly parsed" in {
     "add(1, 5);" should beParsedCorrectly
-    "add(1, 2 * 3, 4 + 5);" should beParsedCorrectly
+    "add(1, (2 * 3), (4 + 5));" should beParsedCorrectly
     "add();" should beParsedCorrectly
-    "add(fn () { x + 5});" should beParsedCorrectly
+    "add(fn () { (x + 5); } );" should beParsedCorrectly
   }
 
 }
