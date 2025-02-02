@@ -1,7 +1,6 @@
 package parser.ast.statements
 
-import com.typesafe.scalalogging.Logger
-import parser.ast.{Expression, Statement}
+import parser.ast.Statement
 import token.Token
 
 case class BlockStatement(
