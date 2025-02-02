@@ -10,7 +10,7 @@ import parser.ast.expressions.{BooleanLiteral, Identifier, IntegerLiteral}
 import parser.ast.{Program, Statement}
 import parser.ast.statements.{ExpressionStatement, LetStatement}
 
-trait ParserTestUtils {
+trait ParserTestUtils extends ParserMatchers {
   def testLetStatement(s: Statement, expectedName: String): Unit = {
     assert(
       s.tokenLiteral == "let",

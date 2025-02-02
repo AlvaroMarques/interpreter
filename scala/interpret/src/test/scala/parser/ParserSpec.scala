@@ -315,6 +315,10 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
     p.errors shouldBe Matchers.empty
   }
 
+  "If expressions" should "work" in {
+    "if (x < y)  { let y = (x + 1);return 5; } else { return y; }" should beParsedCorrectly
+  }
+
   "Function Expressions" should "work, even if there are no arguments" in {
     val input = "fn() { x + y; x + 5; let y = x + 10; fn() { x } ; }"
     val l = Lexer(input)
