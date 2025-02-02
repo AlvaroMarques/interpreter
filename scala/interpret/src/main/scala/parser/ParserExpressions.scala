@@ -8,6 +8,8 @@ import parser.ast.expressions._
 import token.TokenType.{ELSE, EOF, IDENT, LPAREN, RBRACE, RPAREN, SEMICOLON}
 import token.{Token, TokenType}
 
+import scala.util.control.Breaks.break
+
 trait ParserExpressions {
   parser: Parser with ParserErrors =>
   final type PrefixParserFn = () => Option[Expression]
@@ -58,7 +60,41 @@ trait ParserExpressions {
   }
 
   def parseFunctionParameters(): Option[Seq[Identifier]] = {
-    None
+    logger.debug(s"Functions parameters -> token $cToken $pToken")
+    cToken match {
+      case Some(Token(TokenType.LPAREN, _)) =>
+        logger.debug("here")
+        var identifiers = Seq.empty[Identifier]
+        while (
+          pToken
+            .getOrElse(EOFToken)
+            .tokenType != TokenType.RPAREN && pToken.isDefined
+        ) {
+          logger.debug("New iteration: ")
+          nextTokens()
+          (cToken, pToken) match {
+            case (Some(cToken), Some(Token(TokenType.RPAREN, _)))
+                if cToken.tokenType == TokenType.IDENT =>
+              identifiers :+= Identifier(cToken, cToken.literal)
+            case (Some(cToken), Some(Token(TokenType.COMMA, _)))
+                if cToken.tokenType == TokenType.IDENT =>
+              identifiers :+= Identifier(cToken, cToken.literal)
+              logger.debug("Adding normally identifiers")
+              nextTokens()
+            case _ =>
+              logger.debug(
+                s"Something weird is happening with $cToken and $pToken"
+              )
+          }
+        }
+        if (expectPeek(RPAREN)) {
+          nextTokens()
+          Some(identifiers)
+        } else {
+          None
+        }
+      case _ => None
+    }
   }
 
   def parseFunctionExpression(): Option[FunctionLiteral] = {

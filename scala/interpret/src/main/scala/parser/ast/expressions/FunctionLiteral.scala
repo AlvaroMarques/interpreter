@@ -15,5 +15,5 @@ case class FunctionLiteral(
   override def tokenLiteral: String = token.literal
 
   override def string: String =
-    s"fn (${parameters.mkString(", ")}) { ${body.string} }"
+    s"fn (${parameters.map(_.string).mkString(", ")}) ${body.string} "
 }

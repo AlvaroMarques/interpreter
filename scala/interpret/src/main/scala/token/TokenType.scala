@@ -35,7 +35,7 @@ object TokenType extends Enum[TokenType] {
   object RBRACE extends TokenType { override def toString = "}" }
 
   // Keywords
-  object FUNCTION extends TokenType { override def toString = "FUNCTION" }
+  object FUNCTION extends TokenType { override def toString = "fn" }
   object LET extends TokenType { override def toString = "LET" }
   object ELSE extends TokenType { override def toString = "else" }
   object IF extends TokenType { override def toString = "if" }
