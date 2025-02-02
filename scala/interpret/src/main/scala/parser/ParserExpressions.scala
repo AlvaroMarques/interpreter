@@ -5,10 +5,8 @@ import parser.Parser.EOFToken
 import parser.ast.Expression
 import parser.ast.expressions.ExpressionOrdering._
 import parser.ast.expressions._
-import token.TokenType.{ELSE, EOF, IDENT, LPAREN, RBRACE, RPAREN, SEMICOLON}
+import token.TokenType._
 import token.{Token, TokenType}
-
-import scala.util.control.Breaks.break
 
 trait ParserExpressions {
   parser: Parser with ParserErrors =>
@@ -33,7 +31,8 @@ trait ParserExpressions {
     (TokenType.EQ, parseInfixExpression),
     (TokenType.NOT_EQ, parseInfixExpression),
     (TokenType.LT, parseInfixExpression),
-    (TokenType.GT, parseInfixExpression)
+    (TokenType.GT, parseInfixExpression),
+    (TokenType.LPAREN, parseCallExpression)
   )
   final val precedence: Map[TokenType, ExpressionOrdering] = Map(
     TokenType.EQ -> Equal,
@@ -43,7 +42,8 @@ trait ParserExpressions {
     TokenType.PLUS -> Sum,
     TokenType.MINUS -> Sum,
     TokenType.SLASH -> Product,
-    TokenType.ASTERISK -> Product
+    TokenType.ASTERISK -> Product,
+    TokenType.LPAREN -> Call
   )
 
   def parseExpressionMock(): Some[Expression] = {
@@ -175,6 +175,8 @@ trait ParserExpressions {
     }
     leftExp
   }
+
+  def parseCallExpression(expression: Expression): Option[Expression] = None
 
   def peekPrecedence: ExpressionOrdering =
     precedence.getOrElse(pToken.getOrElse(EOFToken).tokenType, Lowest)
