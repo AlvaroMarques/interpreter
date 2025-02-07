@@ -1,8 +1,0 @@
-.bsp/*
-.idea/*
-*.class
-*.cache
-*/target/*
-interpret/.bsp/*
-interpret/.idea/*
-interpret/project/target/*
