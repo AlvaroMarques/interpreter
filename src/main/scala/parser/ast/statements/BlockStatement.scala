@@ -12,6 +12,6 @@ case class BlockStatement(
   override def tokenLiteral: String = token.literal
 
   override def string: String = {
-    s"{ ${statements.map(_.string).mkString(";")}; }"
+    s"{ ${statements.map(_.string).mkString(";")} }"
   }
 }
