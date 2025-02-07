@@ -9,4 +9,5 @@ object ObjectType extends Enum[ObjectType] {
 
   object Integer extends ObjectType
   object Boolean extends ObjectType
+  object Null extends ObjectType
 }
