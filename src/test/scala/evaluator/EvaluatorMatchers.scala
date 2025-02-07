@@ -1,6 +1,6 @@
 package evaluator
 
-import evaluator.objects.NullObject
+import evaluator.objects.{IntegerObject, NullObject}
 import lexer.Lexer
 import org.scalatest.matchers._
 import parser.Parser
@@ -30,5 +30,33 @@ trait EvaluatorMatchers {
     }
   }
 
+  class ValueEvaluatorMatcher[T](valueToCheck: T) extends Matcher[String]{
+    def apply(input: String): MatchResult = {
+      val lexer = Lexer(input)
+      val parser = Parser(lexer)
+      val program = parser.parseProgram()
+      val value = Evaluator(program)
+      MatchResult(
+        matches = value match {
+          case Some(t: IntegerObject) => valueToCheck match {
+            case valueToCheck: BigInt => t.value == valueToCheck
+            case _ => false
+          }
+          case None => false
+        },
+        s"""'$input' should be equal to $valueToCheck, but its not"
+           | also, the following errors were found when parsing the code: ${
+          parser.errors
+            .map(_.message)
+            .mkString("\n\t")
+        }
+           |""".stripMargin,
+        s"The program $input returned the right type!"
+      )
+    }
+
+  }
+
   def beEvaluatedWithType(objectType: ObjectType) = new TypeEvaluatorMatcher(objectType)
+  def beEqualTo[T](value: T) = new ValueEvaluatorMatcher(value: T)
 }
