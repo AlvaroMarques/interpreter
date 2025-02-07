@@ -28,8 +28,7 @@ jobs:
         java-version: '21'
         cache: 'sbt'
         cache-dependency-path: | # optional
-          sub-project/build.sbt
-          sub-project/project/build.properties
+          build.sbt
     - name: Build with SBT
       run: sbt package
 
