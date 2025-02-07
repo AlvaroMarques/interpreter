@@ -1,5 +1,6 @@
 package evaluator
 
+import evaluator.objects.NullObject
 import lexer.Lexer
 import org.scalatest.matchers._
 import parser.Parser
@@ -11,10 +12,13 @@ trait EvaluatorMatchers {
       val lexer = Lexer(input)
       val parser = Parser(lexer)
       val program = parser.parseProgram()
-      val value = Evaluator.evaluator(program)
+      val value = Evaluator(program)
       MatchResult(
-        matches = value.objectType == objectType,
-        s"""'$input' be evaluated for type ${objectType.toString} but instead became ${value.objectType}
+        matches = value match {
+          case Some(t) => t.objectType == objectType
+          case None => false
+        },
+        s"""'$input' be evaluated for type ${objectType.toString} but instead became ${value.getOrElse(NullObject()).objectType}
            | also, the following errors were found when parsing the code: ${
           parser.errors
             .map(_.message)
