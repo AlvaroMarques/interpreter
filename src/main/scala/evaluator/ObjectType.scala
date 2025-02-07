@@ -8,4 +8,5 @@ object ObjectType extends Enum[ObjectType] {
   val values: IndexedSeq[ObjectType] = findValues
 
   object Integer extends ObjectType
+  object Boolean extends ObjectType
 }
