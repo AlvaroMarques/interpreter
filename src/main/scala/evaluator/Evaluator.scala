@@ -1,9 +1,9 @@
 package evaluator
 
 import com.typesafe.scalalogging.Logger
-import evaluator.objects.IntegerObject
+import evaluator.objects.{BooleanObject, IntegerObject}
 import parser.ast.{Node, Program, Statement}
-import parser.ast.expressions.IntegerLiteral
+import parser.ast.expressions.{BooleanLiteral, IntegerLiteral}
 import parser.ast.statements.ExpressionStatement
 
 import scala.annotation.tailrec
@@ -19,9 +19,9 @@ object Evaluator {
       case node: ExpressionStatement => node.expression match {
         case Some(expression) => Evaluator(expression)
         case _ => None
-
       }
       case node: IntegerLiteral => Some(IntegerObject(node.value))
+      case node: BooleanLiteral => Some(BooleanObject.get(node.value))
       case _ => None
     }
   }

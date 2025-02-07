@@ -1,6 +1,6 @@
 package evaluator
 
-import evaluator.objects.{IntegerObject, NullObject}
+import evaluator.objects.{BooleanObject, IntegerObject, NullObject}
 import lexer.Lexer
 import org.scalatest.matchers._
 import parser.Parser
@@ -38,6 +38,10 @@ trait EvaluatorMatchers {
       val value = Evaluator(program)
       MatchResult(
         matches = value match {
+          case Some(t: BooleanObject) => valueToCheck match {
+            case valueToCheck: Boolean => t.value == valueToCheck
+            case _ => false
+          }
           case Some(t: IntegerObject) => valueToCheck match {
             case valueToCheck: BigInt => t.value == valueToCheck
             case _ => false
