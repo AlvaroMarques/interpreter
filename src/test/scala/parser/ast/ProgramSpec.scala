@@ -17,7 +17,7 @@ class ProgramSpec extends AnyFlatSpec {
       )
     )
 
-    assert(program.string == "let myVar = anotherVar;")
+    assert(program.string == "let myVar = anotherVar")
   }
 
 }
