@@ -1,8 +1,8 @@
 package evaluator
 
 import com.typesafe.scalalogging.Logger
-import evaluator.objects.ReturnValue.{False, True}
-import evaluator.objects.{ReturnValue, IntegerObject, NullObject, NullObjectConstructor}
+import evaluator.objects.BooleanObject.{False, True}
+import evaluator.objects.{BooleanObject, IntegerObject, NullObject, NullObjectConstructor}
 import parser.ast.expressions.{BooleanLiteral, IfExpression, InfixExpression, IntegerLiteral, PrefixExpression}
 import parser.ast.statements.{BlockStatement, ExpressionStatement}
 import parser.ast.{Node, Program, Statement}
@@ -20,7 +20,7 @@ object Evaluator {
       }
       case node: BlockStatement => evalStatements(node.statements)
       case node: IntegerLiteral => Some(IntegerObject(node.value))
-      case node: BooleanLiteral => Some(ReturnValue.get(node.value))
+      case node: BooleanLiteral => Some(BooleanObject.get(node.value))
       case node: InfixExpression =>
         (Evaluator(node.left), Evaluator(node.right) ) match {
           case (Some(left), Some(right)) =>
@@ -40,9 +40,9 @@ object Evaluator {
     }
   }
 
-  def evalBangOperator(expression: Anything): Option[ReturnValue] = {
+  def evalBangOperator(expression: Anything): Option[BooleanObject] = {
     expression match {
-      case ReturnValue(value: Boolean) => Some(ReturnValue(!value))
+      case BooleanObject(value: Boolean) => Some(BooleanObject(!value))
       case IntegerObject(value) if value == 0 => Some(True)
       case IntegerObject(_) => Some(False)
       case _ => Some(False)
@@ -51,7 +51,7 @@ object Evaluator {
 
   def evalIfExpression(expression: IfExpression): Option[Anything] = {
      Evaluator(expression.condition) match {
-       case Some(condition: ReturnValue) =>
+       case Some(condition: BooleanObject) =>
          if (condition.value) {
             Evaluator(expression.consequence)
          } else {
@@ -89,10 +89,10 @@ object Evaluator {
       case "-" => Some(IntegerObject(value = left.value - right.value))
       case "/" => Some(IntegerObject(value = left.value / right.value))
       case "*" => Some(IntegerObject(value = left.value * right.value))
-      case "<" => Some(ReturnValue(value = left.value < right.value))
-      case ">" => Some(ReturnValue(value = left.value > right.value))
-      case "==" => Some(ReturnValue(value = left.value == right.value))
-      case "!=" => Some(ReturnValue(value = left.value != right.value))
+      case "<" => Some(BooleanObject(value = left.value < right.value))
+      case ">" => Some(BooleanObject(value = left.value > right.value))
+      case "==" => Some(BooleanObject(value = left.value == right.value))
+      case "!=" => Some(BooleanObject(value = left.value != right.value))
       case _ => Some(NullObject)
     }
   }
@@ -101,8 +101,8 @@ object Evaluator {
     (left, right) match {
       case (left: IntegerObject, right: IntegerObject) => evalIntegerInfixExpression(operator, left, right)
       case _ => operator match {
-        case "==" => Some(ReturnValue(value = left == right))
-        case "!=" => Some(ReturnValue(value = left != right))
+        case "==" => Some(BooleanObject(value = left == right))
+        case "!=" => Some(BooleanObject(value = left != right))
         case _ => None
       }
     }
