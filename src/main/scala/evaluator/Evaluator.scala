@@ -60,7 +60,7 @@ object Evaluator {
              case _ => Some(NullObject)
            }
          }
-       case Some(condition: NullObjectConstructor) =>
+       case Some(_: NullObjectConstructor) =>
          expression.alternative match {
            case Some(alternative) => Evaluator(alternative)
            case _ => Some(NullObject)
@@ -70,7 +70,7 @@ object Evaluator {
            case Some(alternative) => Evaluator(alternative)
            case _ => Some(NullObject)
          }
-       case Some(value) =>
+       case Some(_) =>
          Evaluator(expression.consequence)
        case _ => None
      }
