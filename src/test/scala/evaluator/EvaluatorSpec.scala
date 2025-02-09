@@ -67,4 +67,11 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "if (1 > 2) { 10 } else { 20 }" should beEqualTo(20)
     "if (1 < 2) { 10 } else { 20 }" should beEqualTo(10)
   }
+
+  "Return statements" should "be evaluated correctly" in {
+    "return 10;" should beEqualTo(10)
+    "return 10; 9;" should beEqualTo(10)
+    "return 2 * 5; 9;" should beEqualTo(10)
+    "9; return 2 * 5; 9;" should beEqualTo(10)
+  }
 }
