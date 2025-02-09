@@ -1,6 +1,7 @@
 package evaluator
 
 import com.typesafe.scalalogging.Logger
+import evaluator.objects.BooleanObject.{False, True}
 import evaluator.objects.{BooleanObject, IntegerObject}
 import parser.ast.{Expression, Node, Program, Statement}
 import parser.ast.expressions.{BooleanLiteral, IntegerLiteral, PrefixExpression}
@@ -12,7 +13,6 @@ object Evaluator {
 
   val logger: Logger = Logger(Evaluator.getClass)
 
-  @tailrec
   def apply(node: Node): Option[Anything] = {
     node match {
       case node: Program => evalStatements(node.statements)
@@ -23,14 +23,30 @@ object Evaluator {
       case node: IntegerLiteral => Some(IntegerObject(node.value))
       case node: BooleanLiteral => Some(BooleanObject.get(node.value))
       case node: PrefixExpression =>
-        val right = node.right
-        evalPrefixExpression(node.operator, right)
+        Evaluator(node.right) match {
+          case Some(right) =>
+            evalPrefixExpression(node.operator, right)
+          case _ => None
+        }
+
       case _ => None
     }
   }
 
-  def evalPrefixExpression(operator: String, expression: Expression): Option[Anything] = {
-    None
+  def evalBangOperator(expression: Anything): Option[BooleanObject] = {
+    expression match {
+      case BooleanObject(value: Boolean) => Some(BooleanObject(!value))
+      case IntegerObject(value) if value == 0 => Some(True)
+      case IntegerObject(_) => Some(False)
+      case _ => Some(False)
+    }
+  }
+
+  def evalPrefixExpression(operator: String, right: Anything): Option[Anything] = {
+    operator match {
+      case "!" => evalBangOperator(right)
+      case _ => None
+    }
   }
 
   def evalStatements(statements: Seq[Statement]): Option[Anything] = {
