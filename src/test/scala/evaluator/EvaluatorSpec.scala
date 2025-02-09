@@ -15,5 +15,13 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "false" should beEqualTo(false)
     "true" should beEvaluatedWithType(ObjectType.Boolean)
     "true" should beEqualTo(true)
+
+  }
+
+  "Prefix expressions" should "be correctly valuated" in {
+
+    "!false" should beEqualTo(true)
+    "!true" should beEqualTo(false)
+    "!5" should beEqualTo(false)
   }
 }
