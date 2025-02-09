@@ -70,7 +70,10 @@ object Evaluator {
   def evalInfixExpression(operator: String, left: Anything,  right: Anything): Option[Anything] = {
     (left, right) match {
       case (left: IntegerObject, right: IntegerObject) => evalIntegerInfixExpression(operator, left, right)
-      case _ => None
+      case _ => operator match {
+        case "==" => Some(BooleanObject(value = left == right))
+        case "!=" => Some(BooleanObject(value = left != right))
+      }
     }
   }
 

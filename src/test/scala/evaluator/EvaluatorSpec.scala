@@ -46,5 +46,15 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "1 != 1" should beEqualTo(false)
     "1 == 2" should beEqualTo(false)
     "1 != 2" should beEqualTo(true)
+
+    "true == true" should beEqualTo(true)
+    "false == false" should beEqualTo(true)
+    "true == false" should beEqualTo(false)
+    "true != false" should beEqualTo(true)
+    "false != true" should beEqualTo(true)
+    "(1 < 2) == true" should beEqualTo(true)
+    "(1 < 2) == false" should beEqualTo(false)
+    "(1 > 2) == true" should beEqualTo(false)
+    "(1 > 2) == false" should beEqualTo(true)
   }
 }
