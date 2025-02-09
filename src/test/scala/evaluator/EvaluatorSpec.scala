@@ -57,4 +57,14 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "(1 > 2) == true" should beEqualTo(false)
     "(1 > 2) == false" should beEqualTo(true)
   }
+
+  "Conditional operators" should "be evaluated correctly" in {
+    "if (true) { 10 }" should beEqualTo(10)
+    "if (false) { 10 }" should beEqualTo(value = None)
+    "if (1) { 10 }" should beEqualTo(10)
+    "if (1 < 2) { 10 }" should beEqualTo(10)
+    "if (1 > 2) { 10 }" should beEqualTo(value = None)
+    "if (1 > 2) { 10 } else { 20 }" should beEqualTo(20)
+    "if (1 < 2) { 10 } else { 20 }" should beEqualTo(10)
+  }
 }

@@ -2,9 +2,9 @@ package evaluator
 
 import com.typesafe.scalalogging.Logger
 import evaluator.objects.BooleanObject.{False, True}
-import evaluator.objects.{BooleanObject, IntegerObject, NullObject}
-import parser.ast.expressions.{BooleanLiteral, InfixExpression, IntegerLiteral, PrefixExpression}
-import parser.ast.statements.ExpressionStatement
+import evaluator.objects.{BooleanObject, IntegerObject, NullObject, NullObjectConstructor}
+import parser.ast.expressions.{BooleanLiteral, IfExpression, InfixExpression, IntegerLiteral, PrefixExpression}
+import parser.ast.statements.{BlockStatement, ExpressionStatement}
 import parser.ast.{Node, Program, Statement}
 
 object Evaluator {
@@ -18,6 +18,7 @@ object Evaluator {
         case Some(expression) => Evaluator(expression)
         case _ => None
       }
+      case node: BlockStatement => evalStatements(node.statements)
       case node: IntegerLiteral => Some(IntegerObject(node.value))
       case node: BooleanLiteral => Some(BooleanObject.get(node.value))
       case node: InfixExpression =>
@@ -32,6 +33,8 @@ object Evaluator {
             evalPrefixExpression(node.operator, right)
           case _ => None
         }
+      case node: IfExpression =>
+        evalIfExpression(node)
 
       case _ => None
     }
@@ -44,6 +47,33 @@ object Evaluator {
       case IntegerObject(_) => Some(False)
       case _ => Some(False)
     }
+  }
+
+  def evalIfExpression(expression: IfExpression): Option[Anything] = {
+     Evaluator(expression.condition) match {
+       case Some(condition: BooleanObject) =>
+         if (condition.value) {
+            Evaluator(expression.consequence)
+         } else {
+           expression.alternative match {
+             case Some(alternative) => Evaluator(alternative)
+             case _ => Some(NullObject)
+           }
+         }
+       case Some(condition: NullObjectConstructor) =>
+         expression.alternative match {
+           case Some(alternative) => Evaluator(alternative)
+           case _ => Some(NullObject)
+         }
+       case Some(value: IntegerObject) if value.value == 0 =>
+         expression.alternative match {
+           case Some(alternative) => Evaluator(alternative)
+           case _ => Some(NullObject)
+         }
+       case Some(value) =>
+         Evaluator(expression.consequence)
+       case _ => None
+     }
   }
 
   def evalMinusOperator(expression: Anything): Option[Anything] = {
