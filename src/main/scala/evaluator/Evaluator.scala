@@ -18,7 +18,7 @@ object Evaluator {
         case Some(expression) => Evaluator(expression)
         case _ => None
       }
-      case node: BlockStatement => evalStatements(node.statements)
+      case node: BlockStatement => evalBlockStatement(node)
       case node: IntegerLiteral => Some(IntegerObject(node.value))
       case node: BooleanLiteral => Some(BooleanObject.get(node.value))
       case node: InfixExpression =>
@@ -121,12 +121,31 @@ object Evaluator {
     }
   }
 
+  def evalBlockStatement(blockStatement: BlockStatement): Option[Anything] = {
+    val statementsEvaluations = blockStatement.statements.map(Evaluator(_))
+
+    if (statementsEvaluations.isEmpty) {
+      None
+    } else {
+      logger.info(s"$statementsEvaluations")
+      statementsEvaluations
+        .reduce(
+          (a, b) => (a, b) match {
+            case (Some(rv: ReturnValue), _) => Some(rv)
+            case (_, Some(b)) => Some(b)
+          }
+        )
+    }
+
+  }
+
   def evalStatements(statements: Seq[Statement]): Option[Anything] = {
     val statementsEvaluations = statements.map(Evaluator(_))
 
     if (statementsEvaluations.isEmpty) {
       None
     } else {
+      logger.info(s"$statementsEvaluations")
       statementsEvaluations
         .reduce(
           (a, b) => (a, b) match {
