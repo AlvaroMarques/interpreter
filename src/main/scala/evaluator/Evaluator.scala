@@ -59,6 +59,10 @@ object Evaluator {
       case "-" => Some(IntegerObject(value = left.value - right.value))
       case "/" => Some(IntegerObject(value = left.value / right.value))
       case "*" => Some(IntegerObject(value = left.value * right.value))
+      case "<" => Some(BooleanObject(value = left.value < right.value))
+      case ">" => Some(BooleanObject(value = left.value > right.value))
+      case "==" => Some(BooleanObject(value = left.value == right.value))
+      case "!=" => Some(BooleanObject(value = left.value != right.value))
       case _ => Some(NullObject)
     }
   }

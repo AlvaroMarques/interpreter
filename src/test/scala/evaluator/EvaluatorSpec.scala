@@ -19,7 +19,6 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
   }
 
   "Prefix expressions" should "be correctly valuated" in {
-
     "!false" should beEqualTo(true)
     "!true" should beEqualTo(false)
     "!5" should beEqualTo(false)
@@ -27,6 +26,25 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "-5" should beEqualTo(BigInt(-5))
     "-232131" should beEqualTo(-232131)
     "-false" should beEqualTo(value = None)
+  }
 
+  "Infix expressions" should "be correctly valuated" in {
+    "1 + 5" should beEqualTo(6)
+    "50 / 2 * 2 + 10" should beEqualTo(60)
+    "2 * (5 + 10)" should beEqualTo(30)
+    "3 * 3 * 3 + 10" should beEqualTo(37)
+    "3 * (3 * 3) + 10" should beEqualTo(37)
+    "(5 + 10 * 2 + 15 / 3) * 2 + -10" should beEqualTo(50)
+
+    "true" should beEqualTo(true)
+    "false" should beEqualTo(false)
+    "1 < 2" should beEqualTo(true)
+    "1 > 2" should beEqualTo(false)
+    "1 < 1" should beEqualTo(false)
+    "1 > 1" should beEqualTo(false)
+    "1 == 1" should beEqualTo(true)
+    "1 != 1" should beEqualTo(false)
+    "1 == 2" should beEqualTo(false)
+    "1 != 2" should beEqualTo(true)
   }
 }
