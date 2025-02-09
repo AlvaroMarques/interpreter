@@ -3,7 +3,7 @@ package evaluator
 import com.typesafe.scalalogging.Logger
 import evaluator.objects.BooleanObject.{False, True}
 import evaluator.objects.{BooleanObject, IntegerObject, NullObject}
-import parser.ast.expressions.{BooleanLiteral, IntegerLiteral, PrefixExpression}
+import parser.ast.expressions.{BooleanLiteral, InfixExpression, IntegerLiteral, PrefixExpression}
 import parser.ast.statements.ExpressionStatement
 import parser.ast.{Node, Program, Statement}
 
@@ -20,6 +20,12 @@ object Evaluator {
       }
       case node: IntegerLiteral => Some(IntegerObject(node.value))
       case node: BooleanLiteral => Some(BooleanObject.get(node.value))
+      case node: InfixExpression =>
+        (Evaluator(node.left), Evaluator(node.right) ) match {
+          case (Some(left), Some(right)) =>
+            evalInfixExpression(node.operator, left, right)
+          case _ => None
+        }
       case node: PrefixExpression =>
         Evaluator(node.right) match {
           case Some(right) =>
@@ -44,6 +50,23 @@ object Evaluator {
     expression match {
       case IntegerObject(value) => Some(IntegerObject(-value))
       case _ => Some(NullObject)
+    }
+  }
+
+  def evalIntegerInfixExpression(operator: String, left: IntegerObject,  right: IntegerObject): Option[Anything] = {
+    operator match {
+      case "+" => Some(IntegerObject(value = left.value + right.value))
+      case "-" => Some(IntegerObject(value = left.value - right.value))
+      case "/" => Some(IntegerObject(value = left.value / right.value))
+      case "*" => Some(IntegerObject(value = left.value * right.value))
+      case _ => Some(NullObject)
+    }
+  }
+
+  def evalInfixExpression(operator: String, left: Anything,  right: Anything): Option[Anything] = {
+    (left, right) match {
+      case (left: IntegerObject, right: IntegerObject) => evalIntegerInfixExpression(operator, left, right)
+      case _ => None
     }
   }
 
