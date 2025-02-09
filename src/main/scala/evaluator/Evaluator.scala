@@ -73,6 +73,7 @@ object Evaluator {
       case _ => operator match {
         case "==" => Some(BooleanObject(value = left == right))
         case "!=" => Some(BooleanObject(value = left != right))
+        case _ => None
       }
     }
   }

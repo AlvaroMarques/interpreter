@@ -1,5 +1,6 @@
 package repl
 
+import evaluator.Evaluator
 import lexer.Lexer
 import parser.Parser
 
@@ -12,10 +13,13 @@ object REPL {
       val parser = Parser(tokenEvaluation)
       val program = parser.parseProgram()
       if (parser.errors.nonEmpty) {
-        println("Errors: ")
+        println("Parse Errors: ")
         println(parser.errors.mkString("\n\t"))
       } else {
-        println(program.string)
+        Evaluator(program) match {
+          case Some(value) => println(value)
+          case _ => println("Evaluation error!")
+        }
       }
     }
   }
