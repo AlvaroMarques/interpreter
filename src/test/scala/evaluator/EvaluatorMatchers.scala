@@ -48,11 +48,13 @@ trait EvaluatorMatchers {
           }
           case Some(t: IntegerObject) => valueToCheck match {
             case valueToCheck: BigInt => t.value == valueToCheck
+            case valueToCheck: Int => t.value == BigInt(valueToCheck)
+            case valueToCheck: Long => t.value == BigInt(valueToCheck)
             case _ => false
           }
           case None => false
         },
-        s"""'$input' should be equal to $valueToCheck, but its not"
+        s"""'$input' should be equal to $valueToCheck, but its not, obj returned is $value"
            | also, the following errors were found when parsing the code: ${
           parser.errors
             .map(_.message)

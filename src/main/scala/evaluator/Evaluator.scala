@@ -2,12 +2,10 @@ package evaluator
 
 import com.typesafe.scalalogging.Logger
 import evaluator.objects.BooleanObject.{False, True}
-import evaluator.objects.{BooleanObject, IntegerObject}
-import parser.ast.{Expression, Node, Program, Statement}
+import evaluator.objects.{BooleanObject, IntegerObject, NullObject}
 import parser.ast.expressions.{BooleanLiteral, IntegerLiteral, PrefixExpression}
 import parser.ast.statements.ExpressionStatement
-
-import scala.annotation.tailrec
+import parser.ast.{Node, Program, Statement}
 
 object Evaluator {
 
@@ -42,9 +40,17 @@ object Evaluator {
     }
   }
 
+  def evalMinusOperator(expression: Anything): Option[Anything] = {
+    expression match {
+      case IntegerObject(value) => Some(IntegerObject(-value))
+      case _ => Some(NullObject)
+    }
+  }
+
   def evalPrefixExpression(operator: String, right: Anything): Option[Anything] = {
     operator match {
       case "!" => evalBangOperator(right)
+      case "-" => evalMinusOperator(right)
       case _ => None
     }
   }
