@@ -100,6 +100,12 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
       |  return 1;
       |}
       |""".stripMargin should failWithMessage("type mismatch: BOOLEAN + BOOLEAN")
+  }
 
+  "Let Statements" should "work" in {
+    "let a = 5; a;" should beEqualTo(5)
+    "let a = 5 * 5; a;" should beEqualTo(25)
+    "let a = 5; let b = a; b;" should beEqualTo(5)
+    "let a = 5; let b = a; let c = a + b + 5; c;" should beEqualTo(15)
   }
 }
