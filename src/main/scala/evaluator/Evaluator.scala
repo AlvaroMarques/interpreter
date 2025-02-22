@@ -3,7 +3,7 @@ package evaluator
 import com.typesafe.scalalogging.Logger
 import evaluator.objects.BooleanObject.{False, True}
 import evaluator.objects.{BooleanObject, ErrorObject, IntegerObject, NullObject, NullObjectConstructor, ReturnValue}
-import parser.ast.expressions.{BooleanLiteral, IfExpression, InfixExpression, IntegerLiteral, PrefixExpression}
+import parser.ast.expressions.{BooleanLiteral, Identifier, IfExpression, InfixExpression, IntegerLiteral, PrefixExpression}
 import parser.ast.statements.{BlockStatement, ExpressionStatement, LetStatement, ReturnStatement}
 import parser.ast.{Node, Program, Statement}
 
@@ -11,6 +11,7 @@ case class Evaluator() {
 
   val logger: Logger = Logger(Evaluator.getClass)
   var error: Option[ErrorObject] = None
+  val environment: Environment = new Environment
 
   def evaluate(node: Node): Option[Anything] = {
     node match {
@@ -19,10 +20,21 @@ case class Evaluator() {
         case Some(expression) => evaluate(expression)
         case _ => None
       }
-      case node: LetStatement => evaluate(node.value)
+      case node: LetStatement => evaluate(node.value) match {
+        case Some(e: ErrorObject) => Some(e)
+        case None => None
+        case Some(otherObject: Anything) =>
+          environment.store = environment.store ++ Map(node.name.value -> otherObject)
+          Some(NullObject)
+      }
       case node: BlockStatement => evalBlockStatement(node)
       case node: IntegerLiteral => Some(IntegerObject(node.value))
       case node: BooleanLiteral => Some(BooleanObject.get(node.value))
+      case node: Identifier =>
+        environment.store.get(node.value) match {
+          case Some(objectType: Anything) => Some(objectType)
+          case None => Some(ErrorObject(s"Identifier '${node.value}' not found"))
+        }
       case node: InfixExpression =>
         (evaluate(node.left), evaluate(node.right)) match {
           case (Some(left), Some(right)) =>
