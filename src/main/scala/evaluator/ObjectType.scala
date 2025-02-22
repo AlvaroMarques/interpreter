@@ -1,14 +1,19 @@
 package evaluator
 
-import enumeratum.EnumEntry.Uppercase
 import enumeratum.{Enum, EnumEntry}
-sealed trait ObjectType extends EnumEntry with Uppercase
+sealed trait ObjectType extends EnumEntry {
+  /* Making Object type string with uppercase  */
+  override def toString: String = this.getClass.getSimpleName.replace("$", "").toUpperCase
+}
 
 object ObjectType extends Enum[ObjectType] {
   val values: IndexedSeq[ObjectType] = findValues
 
   object Integer extends ObjectType
+
   object Boolean extends ObjectType
+
   object Error extends ObjectType
+
   object Null extends ObjectType
 }

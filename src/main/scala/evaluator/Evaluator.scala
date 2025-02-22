@@ -10,7 +10,7 @@ import parser.ast.{Node, Program, Statement}
 case class Evaluator() {
 
   val logger: Logger = Logger(Evaluator.getClass)
-  val error: Option[ErrorObject] = None
+  var error: Option[ErrorObject] = None
 
   def evaluate(node: Node): Option[Anything] = {
     node match {
@@ -109,7 +109,9 @@ case class Evaluator() {
       case _ => operator match {
         case "==" => Some(BooleanObject(value = left == right))
         case "!=" => Some(BooleanObject(value = left != right))
-        case _ => None
+        case operator: String =>
+          error = Some(ErrorObject(s"type mismatch: ${left.objectType.toString} $operator ${right.objectType}"))
+          None
       }
     }
   }
