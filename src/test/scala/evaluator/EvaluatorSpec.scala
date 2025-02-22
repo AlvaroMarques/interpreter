@@ -91,6 +91,15 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "true + false;" should failWithMessage("type mismatch: BOOLEAN + BOOLEAN")
     "if (10 > 1) ( true + false; )" should failWithMessage("type mismatch: BOOLEAN + BOOLEAN")
     "5; true + false; 5" should failWithMessage("type mismatch: BOOLEAN + BOOLEAN")
+    """
+      |if (10 > 1) {
+      |  if (10 > 1) {
+      |    return true + false;
+      |  }
+      |
+      |  return 1;
+      |}
+      |""".stripMargin should failWithMessage("type mismatch: BOOLEAN + BOOLEAN")
 
   }
 }
