@@ -85,6 +85,6 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
   }
 
   "Error Handling" should "work" in {
-
+    "5 + true;" should failWithMessage("type mismatch: INTEGER + BOOLEAN")
   }
 }

@@ -10,6 +10,7 @@ trait EvaluatorMatchers {
   def beEvaluatedWithType(objectType: ObjectType) = new TypeEvaluatorMatcher(objectType)
 
   def beEqualTo[T](value: T) = new ValueEvaluatorMatcher(value: T)
+  def failWithMessage(message: String) = new ErrorHandlerMatcher(message)
 
   class ErrorHandlerMatcher(expectedMessage: String) extends Matcher[String] {
     def apply(input: String): MatchResult = {
