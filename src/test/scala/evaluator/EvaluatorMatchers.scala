@@ -7,12 +7,37 @@ import parser.Parser
 
 trait EvaluatorMatchers {
 
+  def beEvaluatedWithType(objectType: ObjectType) = new TypeEvaluatorMatcher(objectType)
+
+  def beEqualTo[T](value: T) = new ValueEvaluatorMatcher(value: T)
+
+  class ErrorHandlerMatcher(expectedMessage: String) extends Matcher[String] {
+    def apply(input: String): MatchResult = {
+      val lexer = Lexer(input)
+      val parser = Parser(lexer)
+      val program = parser.parseProgram()
+      val eval = Evaluator()
+        val value = eval.evaluate(program)
+
+      MatchResult(
+        matches = eval.error match {
+          case Some(t) => t.message == expectedMessage
+          case None => false
+        },
+        s"""'$input' should have the following error: '$expectedMessage' but instead got ${eval.error}"""
+        ,
+        s"The program $input returned the right type!"
+      )
+    }
+  }
+
   class TypeEvaluatorMatcher(objectType: ObjectType) extends Matcher[String] {
     def apply(input: String): MatchResult = {
       val lexer = Lexer(input)
       val parser = Parser(lexer)
       val program = parser.parseProgram()
-      val value = Evaluator(program)
+      val eval = Evaluator()
+      val value = eval.evaluate(program)
       MatchResult(
         matches = value match {
           case Some(t) => t.objectType == objectType
@@ -30,12 +55,13 @@ trait EvaluatorMatchers {
     }
   }
 
-  class ValueEvaluatorMatcher[T](valueToCheck: T) extends Matcher[String]{
+  class ValueEvaluatorMatcher[T](valueToCheck: T) extends Matcher[String] {
     def apply(input: String): MatchResult = {
       val lexer = Lexer(input)
       val parser = Parser(lexer)
       val program = parser.parseProgram()
-      val value = Evaluator(program)
+      val eval = Evaluator()
+      val value = eval.evaluate(program)
       MatchResult(
         matches = value match {
           case Some(t: BooleanObject) => valueToCheck match {
@@ -66,7 +92,4 @@ trait EvaluatorMatchers {
     }
 
   }
-
-  def beEvaluatedWithType(objectType: ObjectType) = new TypeEvaluatorMatcher(objectType)
-  def beEqualTo[T](value: T) = new ValueEvaluatorMatcher(value: T)
 }

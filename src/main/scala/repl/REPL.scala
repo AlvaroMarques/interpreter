@@ -16,7 +16,8 @@ object REPL {
         println("Parse Errors: ")
         println(parser.errors.mkString("\n\t"))
       } else {
-        Evaluator(program) match {
+        val eval = Evaluator()
+        eval.evaluate(program) match {
           case Some(value) => println(value)
           case _ => println("Evaluation error!")
         }

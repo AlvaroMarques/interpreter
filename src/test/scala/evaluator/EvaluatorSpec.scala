@@ -83,4 +83,8 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
       |}
       |""" should beEqualTo(10)
   }
+
+  "Error Handling" should "work" in {
+
+  }
 }

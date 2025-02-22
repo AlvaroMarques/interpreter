@@ -2,33 +2,34 @@ package evaluator
 
 import com.typesafe.scalalogging.Logger
 import evaluator.objects.BooleanObject.{False, True}
-import evaluator.objects.{BooleanObject, IntegerObject, NullObject, NullObjectConstructor, ReturnValue}
+import evaluator.objects.{BooleanObject, ErrorObject, IntegerObject, NullObject, NullObjectConstructor, ReturnValue}
 import parser.ast.expressions.{BooleanLiteral, IfExpression, InfixExpression, IntegerLiteral, PrefixExpression}
 import parser.ast.statements.{BlockStatement, ExpressionStatement, ReturnStatement}
 import parser.ast.{Node, Program, Statement}
 
-object Evaluator {
+case class Evaluator() {
 
   val logger: Logger = Logger(Evaluator.getClass)
+  val error: Option[ErrorObject] = None
 
-  def apply(node: Node): Option[Anything] = {
+  def evaluate(node: Node): Option[Anything] = {
     node match {
       case node: Program => evalStatements(node.statements)
       case node: ExpressionStatement => node.expression match {
-        case Some(expression) => Evaluator(expression)
+        case Some(expression) => evaluate(expression)
         case _ => None
       }
       case node: BlockStatement => evalBlockStatement(node)
       case node: IntegerLiteral => Some(IntegerObject(node.value))
       case node: BooleanLiteral => Some(BooleanObject.get(node.value))
       case node: InfixExpression =>
-        (Evaluator(node.left), Evaluator(node.right)) match {
+        (evaluate(node.left), evaluate(node.right))match {
           case (Some(left), Some(right)) =>
             evalInfixExpression(node.operator, left, right)
           case _ => None
         }
       case node: PrefixExpression =>
-        Evaluator(node.right) match {
+        evaluate(node.right) match {
           case Some(right) =>
             evalPrefixExpression(node.operator, right)
           case _ => None
@@ -36,7 +37,7 @@ object Evaluator {
       case node: IfExpression =>
         evalIfExpression(node)
       case ReturnStatement(_, returnValue) =>
-        Evaluator(returnValue) match {
+        evaluate(returnValue) match {
           case Some(value) => Some(ReturnValue(value))
           case _ => None
         }
@@ -55,28 +56,28 @@ object Evaluator {
   }
 
   def evalIfExpression(expression: IfExpression): Option[Anything] = {
-    Evaluator(expression.condition) match {
+    evaluate(expression.condition) match {
       case Some(condition: BooleanObject) =>
         if (condition.value) {
-          Evaluator(expression.consequence)
+          evaluate(expression.consequence)
         } else {
           expression.alternative match {
-            case Some(alternative) => Evaluator(alternative)
+            case Some(alternative) => evaluate(alternative)
             case _ => Some(NullObject)
           }
         }
       case Some(_: NullObjectConstructor) =>
         expression.alternative match {
-          case Some(alternative) => Evaluator(alternative)
+          case Some(alternative) => evaluate(alternative)
           case _ => Some(NullObject)
         }
       case Some(value: IntegerObject) if value.value == 0 =>
         expression.alternative match {
-          case Some(alternative) => Evaluator(alternative)
+          case Some(alternative) => evaluate(alternative)
           case _ => Some(NullObject)
         }
       case Some(_) =>
-        Evaluator(expression.consequence)
+        evaluate(expression.consequence)
       case _ => None
     }
   }
@@ -122,7 +123,7 @@ object Evaluator {
   }
 
   def evalBlockStatement(blockStatement: BlockStatement): Option[Anything] = {
-    val statementsEvaluations = blockStatement.statements.map(Evaluator(_))
+    val statementsEvaluations = blockStatement.statements.map(evaluate)
 
     if (statementsEvaluations.isEmpty) {
       None
@@ -140,7 +141,7 @@ object Evaluator {
   }
 
   def evalStatements(statements: Seq[Statement]): Option[Anything] = {
-    val statementsEvaluations = statements.map(Evaluator(_))
+    val statementsEvaluations = statements.map(evaluate)
 
     if (statementsEvaluations.isEmpty) {
       None
