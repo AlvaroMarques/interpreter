@@ -1,6 +1,6 @@
 package evaluator
 
-import evaluator.objects.{BooleanObject, IntegerObject, NullObject}
+import evaluator.objects.{BooleanObject, ErrorObject, IntegerObject, NullObject}
 import lexer.Lexer
 import org.scalatest.matchers._
 import parser.Parser
@@ -18,12 +18,14 @@ trait EvaluatorMatchers {
       val parser = Parser(lexer)
       val program = parser.parseProgram()
       val eval = Evaluator()
-        val value = eval.evaluate(program)
+      val value = eval.evaluate(program)
+      println(value)
 
       MatchResult(
-        matches = eval.error match {
-          case Some(t) => t.message == expectedMessage
-          case None => false
+        matches = value match {
+          case Some(t: ErrorObject) =>
+            t.message == expectedMessage
+          case _ => false
         },
         s"""'$input' should have the following error: '$expectedMessage' but instead got ${eval.error}"""
         ,
