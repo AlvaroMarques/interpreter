@@ -138,6 +138,7 @@ case class Evaluator() {
           (a, b) => (a, b) match {
             case (Some(rv: ReturnValue), _) => Some(rv)
             case (_, Some(b)) => Some(b)
+            case _ => None
           }
         )
     }
