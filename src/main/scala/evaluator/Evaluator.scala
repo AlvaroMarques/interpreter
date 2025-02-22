@@ -155,7 +155,7 @@ case class Evaluator() {
       statementsEvaluations
         .reduce(
           (a, b) => (a, b) match {
-            case (Some(rv: ReturnValue), _) => Some(rv)
+            case (Some(rv: ReturnValue), Some(_)) => Some(rv)
             case (_, Some(b)) => Some(b)
             case _ => None
           }
