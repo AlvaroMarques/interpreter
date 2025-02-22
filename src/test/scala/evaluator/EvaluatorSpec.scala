@@ -86,5 +86,11 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
 
   "Error Handling" should "work" in {
     "5 + true;" should failWithMessage("type mismatch: INTEGER + BOOLEAN")
+    "5 + true; 5;" should failWithMessage("type mismatch: INTEGER + BOOLEAN")
+    "-true" should failWithMessage("unknown operator: -BOOLEAN")
+    "true + false;" should failWithMessage("type mismatch: BOOLEAN + BOOLEAN")
+    "if (10 > 1) ( true + false; )" should failWithMessage("type mismatch: BOOLEAN + BOOLEAN")
+    "5; true + false; 5" should failWithMessage("type mismatch: BOOLEAN + BOOLEAN")
+
   }
 }

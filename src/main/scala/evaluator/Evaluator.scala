@@ -85,7 +85,9 @@ case class Evaluator() {
   def evalMinusOperator(expression: Anything): Option[Anything] = {
     expression match {
       case IntegerObject(value) => Some(IntegerObject(-value))
-      case _ => Some(NullObject)
+      case otherObject =>
+        error = Some(ErrorObject(s"unknown operator: -${otherObject.objectType.toString}"))
+        Some(NullObject)
     }
   }
 
@@ -154,6 +156,7 @@ case class Evaluator() {
           (a, b) => (a, b) match {
             case (Some(rv: ReturnValue), _) => Some(rv)
             case (_, Some(b)) => Some(b)
+            case _ => None
           }
         ) match {
           case Some(returnValue: ReturnValue) => Some(returnValue.value)
