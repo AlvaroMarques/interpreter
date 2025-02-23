@@ -28,6 +28,7 @@ case class Evaluator() {
       }
       case node: BlockStatement => evalBlockStatement(node, context)
       case node: IntegerLiteral => Some(IntegerObject(node.value))
+      case node: StringLiteral => Some(StringObject(node.tokenLiteral))
       case node: BooleanLiteral => Some(BooleanObject.get(node.value))
       case node: FunctionLiteral =>
         Some(FunctionObject(node.parameters, node.body))

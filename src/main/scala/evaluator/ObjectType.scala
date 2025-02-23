@@ -12,6 +12,8 @@ object ObjectType extends Enum[ObjectType] {
 
   object Integer extends ObjectType
 
+  object String extends ObjectType
+
   object Boolean extends ObjectType
 
   object Error extends ObjectType

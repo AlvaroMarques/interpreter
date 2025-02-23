@@ -16,6 +16,9 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "true" should beEvaluatedWithType(ObjectType.Boolean)
     "true" should beEqualTo(true)
 
+    "\"hey\"" should beEqualTo("hey")
+    "\" you need to pick your afro \\\"daddy\\\" \"" should beEqualTo(" you need to pick your afro \\\"daddy\\\" ")
+
   }
 
   "Prefix expressions" should "be correctly valuated" in {
