@@ -6,7 +6,7 @@ import org.scalatest.Assertions.fail
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.matchers.must.Matchers.have
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import parser.ast.expressions.{BooleanLiteral, Identifier, IntegerLiteral}
+import parser.ast.expressions.{BooleanLiteral, Identifier, IntegerLiteral, StringLiteral}
 import parser.ast.{Program, Statement}
 import parser.ast.statements.{ExpressionStatement, LetStatement}
 
@@ -64,6 +64,25 @@ trait ParserTestUtils extends ParserMatchers {
             assert(ident.value == expectedValue)
             assert(ident.tokenLiteral == expectedValue)
           case _ => fail("Statement expression should be IntegerLiteral")
+        }
+
+      case _ => fail("Statement is not an expression statement")
+    }
+  }
+
+  def testStringLiteral(input: String, expectedValue: String): Unit = {
+    val l = Lexer(input)
+    val p = Parser(l)
+    val program = p.parseProgram()
+
+    program.statements.length shouldBe 1
+    p.errors shouldBe Matchers.empty
+    program.statements.head match {
+      case stmt: ExpressionStatement =>
+        stmt.expression match {
+          case Some(ident: StringLiteral) =>
+            assert(ident.tokenLiteral == expectedValue, s"${ident.tokenLiteral} did not equal $expectedValue")
+          case _ => fail("Statement expression should be StringLiteral")
         }
 
       case _ => fail("Statement is not an expression statement")

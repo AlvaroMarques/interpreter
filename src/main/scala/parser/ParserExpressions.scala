@@ -17,6 +17,7 @@ trait ParserExpressions {
     TokenType.FALSE -> parseBoolean,
     TokenType.IDENT -> parseIdentifier,
     TokenType.INT -> parseInteger,
+    TokenType.STR -> parseString,
     TokenType.LPAREN -> parseGroupedExpression,
     TokenType.MINUS -> parsePrefixExpression,
     TokenType.TRUE -> parseBoolean,
@@ -301,6 +302,14 @@ trait ParserExpressions {
       case _ => None
     }
 
+  }
+
+  def parseString(): Option[StringLiteral] = {
+    cToken match {
+      case Some(token) =>
+        Some(StringLiteral(token, token.literal))
+      case _ => None
+    }
   }
 
   def parseInteger(): Option[IntegerLiteral] = {

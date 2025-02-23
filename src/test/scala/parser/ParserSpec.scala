@@ -104,6 +104,11 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
     testBooleanLiteral(inputFalse, expectedValue = false)
   }
 
+  "ExpressionParser - string literals" should "Be correctly parsed" in {
+    val input = "\"everything is going to be alright\";"
+    testStringLiteral(input, "everything is going to be alright")
+  }
+
   "ExpressionParser - integer literals" should "Be correctly parsed" in {
     val input = "420;"
     testIntegerLiteral(input, 420)
