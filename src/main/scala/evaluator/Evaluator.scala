@@ -13,15 +13,15 @@ case class Evaluator() {
   val environment: Environment = new Environment
   var error: Option[ErrorObject] = None
 
-  def evaluate(node: Node, context: String = "__global__"): Option[Anything] = {
+  def evaluate(node: Node, context: String): Option[Anything] = {
     println(s"Evaluating $node with context $context")
     node match {
       case node: Program => evalStatements(node.statements, context)
       case node: ExpressionStatement => node.expression match {
-        case Some(expression) => evaluate(expression)
+        case Some(expression) => evaluate(expression, context)
         case _ => None
       }
-      case node: LetStatement => evaluate(node.value) match {
+      case node: LetStatement => evaluate(node.value, context) match {
         case Some(e: ErrorObject) => Some(e)
         case None => None
         case Some(otherObject: Anything) =>
@@ -61,7 +61,7 @@ case class Evaluator() {
           case _ => None
         }
       case node: IfExpression =>
-        evalIfExpression(node)
+        evalIfExpression(node, context)
       case ReturnStatement(_, returnValue) =>
         evaluate(returnValue, context) match {
           case Some(value) => Some(ReturnValue(value))
@@ -92,29 +92,29 @@ case class Evaluator() {
     }
   }
 
-  def evalIfExpression(expression: IfExpression): Option[Anything] = {
-    evaluate(expression.condition) match {
+  def evalIfExpression(expression: IfExpression, context: String): Option[Anything] = {
+    evaluate(expression.condition, context) match {
       case Some(condition: BooleanObject) =>
         if (condition.value) {
-          evaluate(expression.consequence)
+          evaluate(expression.consequence, context)
         } else {
           expression.alternative match {
-            case Some(alternative) => evaluate(alternative)
+            case Some(alternative) => evaluate(alternative, context)
             case _ => Some(NullObject)
           }
         }
       case Some(_: NullObjectConstructor) =>
         expression.alternative match {
-          case Some(alternative) => evaluate(alternative)
+          case Some(alternative) => evaluate(alternative, context)
           case _ => Some(NullObject)
         }
       case Some(value: IntegerObject) if value.value == 0 =>
         expression.alternative match {
-          case Some(alternative) => evaluate(alternative)
+          case Some(alternative) => evaluate(alternative, context)
           case _ => Some(NullObject)
         }
       case Some(_) =>
-        evaluate(expression.consequence)
+        evaluate(expression.consequence, context)
       case _ => None
     }
   }

@@ -18,7 +18,7 @@ trait EvaluatorMatchers {
       val parser = Parser(lexer)
       val program = parser.parseProgram()
       val eval = Evaluator()
-      val value = eval.evaluate(program)
+      val value = eval.evaluate(program, context = "__global__")
       println(value)
 
       MatchResult(
@@ -40,7 +40,7 @@ trait EvaluatorMatchers {
       val parser = Parser(lexer)
       val program = parser.parseProgram()
       val eval = Evaluator()
-      val value = eval.evaluate(program)
+      val value = eval.evaluate(program, context = "__global__")
       MatchResult(
         matches = value match {
           case Some(t) => t.objectType == objectType
@@ -64,7 +64,7 @@ trait EvaluatorMatchers {
       val parser = Parser(lexer)
       val program = parser.parseProgram()
       val eval = Evaluator()
-      val value = eval.evaluate(program)
+      val value = eval.evaluate(program, context = "__global__")
       MatchResult(
         matches = value match {
           case Some(t: BooleanObject) => valueToCheck match {
