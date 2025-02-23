@@ -108,4 +108,8 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "let a = 5; let b = a; let c = false; b; a + b;" should beEqualTo(10)
     "let a = 5; let b = a; let c = a + b + 5; c;" should beEqualTo(15)
   }
+
+  "Function Statements" should "work" in {
+    "let x = fn(y) { return y + 1; } ; x(10)" should beEqualTo(15)
+  }
 }
