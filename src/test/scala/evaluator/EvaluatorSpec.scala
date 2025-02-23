@@ -113,5 +113,6 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "let x = fn(y) { return y + 1; }; x(10); " should beEqualTo(11)
     "let x = fn(a, b) { if (a > b) { a } else { b } }; x(2, 1) + x(2, 3); " should beEqualTo(5)
     "let x = fn (c) { if (c < 10) { c + x(c+1); } else { c; }}; x(0);" should beEqualTo(55)
+    "fn (c) { if (c < 10) { c + 1} else { c; }}(0);" should beEqualTo(1)
   }
 }

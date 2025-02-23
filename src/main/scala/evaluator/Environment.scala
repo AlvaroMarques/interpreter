@@ -7,7 +7,6 @@ class Environment {
 
   def addObject(context: String, variable: String, value: Anything): Option[Anything] = {
     store = store ++ Map(variableName(context, variable) -> value)
-    println(store.keySet)
     Some(NullObject)
   }
 

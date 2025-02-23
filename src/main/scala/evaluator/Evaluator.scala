@@ -39,8 +39,8 @@ case class Evaluator() {
               case Some(otherObject: Anything) => Some(ErrorObject(s"${otherObject.objectType.toString} doesn't allow calls"))
               case None => Some(ErrorObject(s"${function.value} not found on context $context"))
             }
-          case function: FunctionLiteral => ???
-          case _ => ???
+          case function: FunctionLiteral => evaluateFunctionLiteral(function, node.arguments, context)
+          case otherObject => Some(ErrorObject(s"${otherObject.string} doesn't allow call expressions!"))
         }
       case node: Identifier =>
         environment.getObject(context, node.value) match {
@@ -69,6 +69,17 @@ case class Evaluator() {
 
       case _ => None
     }
+  }
+
+  def evaluateFunctionLiteral(f: FunctionLiteral, arguments: Seq[Expression],context: String): Option[Anything] = {
+    val localContext = s"${f.hashCode().toString}.$context"
+    f.parameters.zip(arguments).map {
+      case (identifier: Identifier, expression: Expression) =>
+        environment.addObject(context = localContext,
+          variable = identifier.value,
+          value = evaluate(expression, context).getOrElse(ErrorObject(s"Error parsing argument ${identifier.value} on function call")))
+    }
+    evaluate(f.body, localContext)
   }
 
   def evalFunction(f: FunctionObject, arguments: Seq[Expression], context: String): Option[Anything] = {
