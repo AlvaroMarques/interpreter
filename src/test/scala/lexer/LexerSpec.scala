@@ -23,7 +23,7 @@ class LexerSpec extends AnyFlatSpec {
   }
 
   "strings" should "be parsed" in {
-    val input = "\"hey\""
+    val input = "\"hey\"; \"hey\\\"aaaaa \";"
     val (_, lexer: Lexer) = Lexer(input).token
     println(lexer.getTokens.mkString(","))
   }

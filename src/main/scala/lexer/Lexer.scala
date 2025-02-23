@@ -24,7 +24,7 @@ case class Lexer(input: String, position: Int = -1, ch: Byte = 0)
   }
 
   def readString: (String, Lexer) = {
-    if (nextChar != '\"' && ch != 0) {
+    if ((nextChar != '\"' || (nextChar == '\"' && ch.toChar == '\\')) && ch != 0) {
       val (string, nextLexer) = next.readString
       (ch.toChar.toString ++ string, nextLexer)
     } else {
