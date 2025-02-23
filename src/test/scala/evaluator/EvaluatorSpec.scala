@@ -25,7 +25,7 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
 
     "-5" should beEqualTo(BigInt(-5))
     "-232131" should beEqualTo(-232131)
-    "-false" should beEqualTo(value = None)
+    "-false" should failWithMessage("unknown operator: -BOOLEAN")
   }
 
   "Infix expressions" should "be correctly valuated" in {

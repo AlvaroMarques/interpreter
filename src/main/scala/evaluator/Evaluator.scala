@@ -13,9 +13,9 @@ case class Evaluator() {
   var error: Option[ErrorObject] = None
   val environment: Environment = new Environment
 
-  def evaluate(node: Node): Option[Anything] = {
+  def evaluate(node: Node, context: String = "__global__"): Option[Anything] = {
     node match {
-      case node: Program => evalStatements(node.statements)
+      case node: Program => evalStatements(node.statements, context)
       case node: ExpressionStatement => node.expression match {
         case Some(expression) => evaluate(expression)
         case _ => None
@@ -24,14 +24,13 @@ case class Evaluator() {
         case Some(e: ErrorObject) => Some(e)
         case None => None
         case Some(otherObject: Anything) =>
-          environment.store = environment.store ++ Map(node.name.value -> otherObject)
-          Some(NullObject)
+          environment.addObject(context, node.name.value, otherObject)
       }
-      case node: BlockStatement => evalBlockStatement(node)
+      case node: BlockStatement => evalBlockStatement(node, context)
       case node: IntegerLiteral => Some(IntegerObject(node.value))
       case node: BooleanLiteral => Some(BooleanObject.get(node.value))
       case node: Identifier =>
-        environment.store.get(node.value) match {
+        environment.getObject(context, node.value) match {
           case Some(objectType: Anything) => Some(objectType)
           case None => Some(ErrorObject(s"Identifier '${node.value}' not found"))
         }
@@ -140,8 +139,8 @@ case class Evaluator() {
     }
   }
 
-  def evalBlockStatement(blockStatement: BlockStatement): Option[Anything] = {
-    val statementsEvaluations = blockStatement.statements.map(evaluate)
+  def evalBlockStatement(blockStatement: BlockStatement, context: String): Option[Anything] = {
+    val statementsEvaluations = blockStatement.statements.map(evaluate(_, context))
 
     if (statementsEvaluations.isEmpty) {
       None
@@ -160,8 +159,8 @@ case class Evaluator() {
 
   }
 
-  def evalStatements(statements: Seq[Statement]): Option[Anything] = {
-    val statementsEvaluations = statements.map(evaluate)
+  def evalStatements(statements: Seq[Statement], context: String): Option[Anything] = {
+    val statementsEvaluations = statements.map(evaluate(_, context))
 
     if (statementsEvaluations.isEmpty) {
       None
