@@ -14,8 +14,6 @@ case class Evaluator() {
   var error: Option[ErrorObject] = None
 
   def evaluate(node: Node, context: String): Option[Anything] = {
-    println(s"Evaluating $node with context $context")
-    println(s"Environment with the following keys: ${environment.store.keySet}")
     node match {
       case node: Program => evalStatements(node.statements, context)
       case node: ExpressionStatement => node.expression match {
@@ -26,7 +24,6 @@ case class Evaluator() {
         case Some(e: ErrorObject) => Some(e)
         case None => None
         case Some(otherObject: Anything) =>
-          println("Adding to environment!")
           environment.addObject(context, node.name.value, otherObject)
       }
       case node: BlockStatement => evalBlockStatement(node, context)

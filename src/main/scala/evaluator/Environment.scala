@@ -14,7 +14,6 @@ class Environment {
   private[evaluator] def variableName(context: String, variable: String): String = s"$variable.$context"
 
   def getObject(context: String, variable: String): Option[Anything] = {
-    println(s"Finding on $context $variable")
     if (context == "") {
       None
     } else {
@@ -23,10 +22,8 @@ class Environment {
         case None =>
           context.split("[.]") match {
             case nonEmptyArray: Array[String] if nonEmptyArray.nonEmpty =>
-              println(s"Non empty array ${nonEmptyArray.mkString("Array(", ", ", ")")}")
               getObject(nonEmptyArray.tail.mkString("."), variable)
-            case other =>
-
+            case _ =>
               None
           }
       }
