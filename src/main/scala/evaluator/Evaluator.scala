@@ -15,6 +15,7 @@ case class Evaluator() {
 
   def evaluate(node: Node, context: String): Option[Anything] = {
     println(s"Evaluating $node with context $context")
+    println(s"Environment with the following keys: ${environment.store.keySet}")
     node match {
       case node: Program => evalStatements(node.statements, context)
       case node: ExpressionStatement => node.expression match {
@@ -25,6 +26,7 @@ case class Evaluator() {
         case Some(e: ErrorObject) => Some(e)
         case None => None
         case Some(otherObject: Anything) =>
+          println("Adding to environment!")
           environment.addObject(context, node.name.value, otherObject)
       }
       case node: BlockStatement => evalBlockStatement(node, context)
@@ -73,7 +75,7 @@ case class Evaluator() {
   }
 
   def evalFunction(f: FunctionObject, arguments: Seq[Expression], context: String): Option[Anything] = {
-    val localContext = s"$context.${f.hashCode().toString}"
+    val localContext = s"${f.hashCode().toString}.$context"
     f.parameters.zip(arguments).map {
       case (identifier: Identifier, expression: Expression) =>
         environment.addObject(context = localContext,

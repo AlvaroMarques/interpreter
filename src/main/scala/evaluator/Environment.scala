@@ -7,14 +7,29 @@ class Environment {
 
   def addObject(context: String, variable: String, value: Anything): Option[Anything] = {
     store = store ++ Map(variableName(context, variable) -> value)
+    println(store.keySet)
     Some(NullObject)
   }
 
-  private[evaluator] def variableName(context: String, variable: String): String = s"$context.$variable"
+  private[evaluator] def variableName(context: String, variable: String): String = s"$variable.$context"
 
   def getObject(context: String, variable: String): Option[Anything] = {
-    println(variableName(context, variable))
-    println(store.keySet)
-    store.get(variableName(context = context, variable = variable))
+    println(s"Finding on $context $variable")
+    if (context == "") {
+      None
+    } else {
+      store.get(variableName(context = context, variable = variable)) match {
+        case Some(obj) => Some(obj)
+        case None =>
+          context.split("[.]") match {
+            case nonEmptyArray: Array[String] if nonEmptyArray.nonEmpty =>
+              println(s"Non empty array ${nonEmptyArray.mkString("Array(", ", ", ")")}")
+              getObject(nonEmptyArray.tail.mkString("."), variable)
+            case other =>
+
+              None
+          }
+      }
+    }
   }
 }
