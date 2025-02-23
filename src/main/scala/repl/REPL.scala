@@ -6,6 +6,7 @@ import parser.Parser
 
 object REPL {
   def run(): Unit = {
+    val eval = Evaluator()
     while (true) {
       printf("~ ")
       val line = scala.io.StdIn.readLine()
@@ -16,7 +17,6 @@ object REPL {
         println("Parse Errors: ")
         println(parser.errors.mkString("\n\t"))
       } else {
-        val eval = Evaluator()
         eval.evaluate(program, context = "__global__") match {
           case Some(value) => println(value)
           case _ => println("Evaluation error!")
