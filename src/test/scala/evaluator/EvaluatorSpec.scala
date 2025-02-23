@@ -110,6 +110,6 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
   }
 
   "Function Statements" should "work" in {
-    "let x = fn(y) { return y + 1; } ; x(10)" should beEqualTo(15)
+    "let x = fn(y) { return y + 1; }; x(10); " should beEqualTo(11)
   }
 }
