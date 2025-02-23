@@ -72,7 +72,7 @@ case class Evaluator() {
     }
   }
 
-  def evaluateFunctionLiteral(f: FunctionLiteral, arguments: Seq[Expression],context: String): Option[Anything] = {
+  def evaluateFunctionLiteral(f: FunctionLiteral, arguments: Seq[Expression], context: String): Option[Anything] = {
     val localContext = s"${f.hashCode().toString}.$context"
     f.parameters.zip(arguments).map {
       case (identifier: Identifier, expression: Expression) =>
@@ -150,13 +150,25 @@ case class Evaluator() {
       case ">" => Some(BooleanObject(value = left.value > right.value))
       case "==" => Some(BooleanObject(value = left.value == right.value))
       case "!=" => Some(BooleanObject(value = left.value != right.value))
-      case _ => Some(NullObject)
+      case otherOperand: String => Some(ErrorObject(s"Unsupported operand '$otherOperand' between ${left.objectType.toString} and ${right.objectType.toString}"))
+    }
+  }
+
+  def evalStringInfixExpression(operator: String, left: StringObject, right: StringObject): Option[Anything] = {
+    operator match {
+      case "+" => Some(StringObject(value = left.value ++ right.value))
+      case "<" => Some(BooleanObject(value = left.value < right.value))
+      case ">" => Some(BooleanObject(value = left.value > right.value))
+      case "==" => Some(BooleanObject(value = left.value == right.value))
+      case "!=" => Some(BooleanObject(value = left.value != right.value))
+      case otherOperand: String => Some(ErrorObject(s"Unsupported operand '$otherOperand' between ${left.objectType.toString} and ${right.objectType.toString}"))
     }
   }
 
   def evalInfixExpression(operator: String, left: Anything, right: Anything): Option[Anything] = {
     (left, right) match {
       case (left: IntegerObject, right: IntegerObject) => evalIntegerInfixExpression(operator, left, right)
+      case (left: StringObject, right: StringObject) => evalStringInfixExpression(operator, left, right)
       case (e: ErrorObject, _) => Some(e)
       case (_, e: ErrorObject) => Some(e)
       case _ => operator match {
