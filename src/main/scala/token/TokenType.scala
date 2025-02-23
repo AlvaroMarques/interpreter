@@ -12,6 +12,7 @@ object TokenType extends Enum[TokenType] {
   // Identifiers + literals
   object IDENT extends TokenType { override def toString = "IDENT" }
   object INT extends TokenType { override def toString = "INT" }
+  object STR extends TokenType { override def toString = "STR" }
 
   // Operators
   object ASSIGN extends TokenType { override def toString = "=" }

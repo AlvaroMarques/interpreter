@@ -12,7 +12,7 @@ case class Lexer(input: String, position: Int = -1, ch: Byte = 0)
   def nextChar: Byte = {
     if (nextPosition >= input.length) 0 else input(nextPosition).toByte
   }
-  def next: Lexer = Lexer(input, nextPosition, nextChar)
+  final def next: Lexer = Lexer(input, nextPosition, nextChar)
 
   def readIdentifier: (String, Lexer) = {
     if (isLetter(ch)) {
@@ -20,6 +20,15 @@ case class Lexer(input: String, position: Int = -1, ch: Byte = 0)
       (ch.toChar.toString ++ identifierTail, nextLexer)
     } else {
       ("", this)
+    }
+  }
+
+  def readString: (String, Lexer) = {
+    if (nextChar != '\"' && ch != 0) {
+      val (string, nextLexer) = next.readString
+      (ch.toChar.toString ++ string, nextLexer)
+    } else {
+      (ch.toChar.toString ++ "\"", next)
     }
   }
 
@@ -58,6 +67,14 @@ case class Lexer(input: String, position: Int = -1, ch: Byte = 0)
       next.token
     } else {
       ch match {
+        case '\"' =>
+          val (identifier: String, nextLexer: Lexer) = readString
+          (
+            Some(
+              Token(TokenType.STR, identifier)
+            ),
+            nextLexer.next
+          )
         case '=' =>
           if (next.ch == '=') {
             (
