@@ -20,7 +20,6 @@ trait EvaluatorMatchers {
       val program = parser.parseProgram()
       val eval = Evaluator()
       val value = eval.evaluate(program, context = "__global__")
-      println(value)
 
       MatchResult(
         matches = value match {

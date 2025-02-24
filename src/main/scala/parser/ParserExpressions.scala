@@ -146,7 +146,6 @@ trait ParserExpressions {
     var leftExp: Option[Expression] =
       prefixParserFns.get(cToken.getOrElse(EOFToken).tokenType) match {
         case Some(function: PrefixParserFn) =>
-          println("Found a function!")
           function()
         case None =>
           cToken match {
@@ -178,7 +177,6 @@ trait ParserExpressions {
         case None =>
       }
     }
-    println(leftExp)
     leftExp
   }
 
@@ -252,19 +250,15 @@ trait ParserExpressions {
         parser.nextTokens()
         parser.parseExpression(Lowest) match {
           case None =>
-            println("Bad expression")
             None
 
           case Some(expression) =>
-            println("Good Expression")
             arguments :+= expression
             while (
               pToken match {
                 case Some(Token(COMMA, _)) =>
-                  println(s"Continuing, ptoken = $pToken")
                   true
                 case _                     =>
-                  println(s"Stopping, ptoken = $pToken")
                   false
               }
             ) {
@@ -272,16 +266,13 @@ trait ParserExpressions {
               parser.nextTokens()
               parser.parseExpression(Lowest) match {
                 case Some(expression) =>
-                  println("continue to be good expression!")
                   arguments :+= expression
                 case _ =>
               }
             }
             if (!parser.expectPeek(RBRACKET)) {
-              println(s"Actually, peek is $pToken")
               None
             } else {
-              println("Returning array literal!")
               Some(ArrayLiteral(cToken.getOrElse(EOFToken), arguments))
             }
         }

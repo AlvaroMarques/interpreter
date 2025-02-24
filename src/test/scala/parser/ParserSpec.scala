@@ -328,7 +328,6 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
     val l = Lexer(input)
     val p = Parser(l)
     val program = p.parseProgram()
-    println(program.string)
     p.errors shouldBe Matchers.empty
   }
 
@@ -341,7 +340,6 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
     val l = Lexer(input)
     val p = Parser(l)
     val program = p.parseProgram()
-    println(program.string)
     p.errors shouldBe Matchers.empty
   }
 
