@@ -6,9 +6,9 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.matchers.must.Matchers.{a, have}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import parser.ast.Statement
-import parser.ast.expressions.{Identifier, InfixExpression, PrefixExpression}
+import parser.ast.expressions.{Identifier, InfixExpression, IntegerLiteral, PrefixExpression}
 import parser.ast.statements.ExpressionStatement
-import token.Token
+import token.{Token, TokenType}
 import token.TokenType._
 
 class ParserSpec extends AnyFlatSpec with ParserTestUtils {
@@ -107,6 +107,11 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
   "ExpressionParser - string literals" should "Be correctly parsed" in {
     val input = "\"everything is going to be alright\";"
     testStringLiteral(input, "everything is going to be alright")
+  }
+
+  "ExpressionParser - array literals" should "Be correctly parsed" in {
+    val input = "[1, 2, 3];"
+    testArrayLiteral(input, Seq(1, 2, 3).map(value => Token(TokenType.INT, value.toString)).map(t => IntegerLiteral(t, t.literal.toInt)))
   }
 
   "ExpressionParser - integer literals" should "Be correctly parsed" in {
