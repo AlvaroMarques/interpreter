@@ -19,6 +19,12 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "\"hey\"" should beEqualTo("hey")
     "\" you need to pick your afro \\\"daddy\\\" \"" should beEqualTo(" you need to pick your afro \\\"daddy\\\" ")
 
+    "[1, 2, \"hey\"]" should beInspectedInto("[1,2,hey]")
+    "[1, 2,[1,2,3,\"hey\"]]" should beInspectedInto("[1,2,[1,2,3,hey]]")
+    "[]" should beInspectedInto("[]")
+    "[[[]]]" should beInspectedInto("[[[]]]")
+    "[[],[]]" should beInspectedInto("[[],[]]")
+
   }
 
   "Prefix expressions" should "be correctly valuated" in {

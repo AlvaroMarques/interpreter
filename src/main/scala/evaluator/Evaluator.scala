@@ -30,6 +30,13 @@ case class Evaluator() {
       case node: IntegerLiteral => Some(IntegerObject(node.value))
       case node: StringLiteral => Some(StringObject(node.value))
       case node: BooleanLiteral => Some(BooleanObject.get(node.value))
+      case node: ArrayLiteral =>
+        val evaluatedValues = node.values.map(evaluate(_, context))
+        if (evaluatedValues.exists(_.isEmpty)) {
+          Some(ErrorObject(s"Failed to evaluate array ${node.string} on ${evaluatedValues.find(_.isEmpty)}"))
+        } else {
+          Some(ArrayObject(evaluatedValues.flatten))
+        }
       case node: FunctionLiteral =>
         Some(FunctionObject(node.parameters, node.body))
       case node: CallExpression =>

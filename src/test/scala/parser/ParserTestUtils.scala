@@ -1,13 +1,11 @@
 package parser
 
-import errors.ParserError
 import lexer.Lexer
 import org.scalatest.Assertions.fail
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.matchers.must.Matchers.have
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import parser.ast.{Expression, Statement}
 import parser.ast.expressions.{ArrayLiteral, BooleanLiteral, Identifier, IntegerLiteral, StringLiteral}
-import parser.ast.{Expression, Program, Statement}
 import parser.ast.statements.{ExpressionStatement, LetStatement}
 
 trait ParserTestUtils extends ParserMatchers {

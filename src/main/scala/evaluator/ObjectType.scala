@@ -21,4 +21,6 @@ object ObjectType extends Enum[ObjectType] {
   object Null extends ObjectType
 
   object Function extends ObjectType
+
+  object Array extends ObjectType
 }
