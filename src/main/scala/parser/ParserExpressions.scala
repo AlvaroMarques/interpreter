@@ -360,7 +360,7 @@ trait ParserExpressions {
   def parseString(): Option[StringLiteral] = {
     cToken match {
       case Some(token) =>
-        Some(StringLiteral(token, token.literal))
+        Some(StringLiteral(token))
       case _ => None
     }
   }

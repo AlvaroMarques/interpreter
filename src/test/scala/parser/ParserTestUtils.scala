@@ -81,7 +81,7 @@ trait ParserTestUtils extends ParserMatchers {
       case stmt: ExpressionStatement =>
         stmt.expression match {
           case Some(ident: StringLiteral) =>
-            assert(ident.tokenLiteral == expectedValue, s"${ident.tokenLiteral} did not equal $expectedValue")
+            assert(ident.value == expectedValue, s"${ident.tokenLiteral} did not equal $expectedValue")
           case _ => fail("Statement expression should be StringLiteral")
         }
 
@@ -100,7 +100,7 @@ trait ParserTestUtils extends ParserMatchers {
       case stmt: ExpressionStatement =>
         stmt.expression match {
           case Some(ident: ArrayLiteral) =>
-            assert(ident.values == expectedValue)
+            assert(ident.values == expectedValue, s"Values should be $expectedValue but are actually ${ident.string}")
           case _ => fail("Statement expression should be IntegerLiteral")
         }
 
