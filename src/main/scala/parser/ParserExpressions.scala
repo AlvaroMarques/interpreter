@@ -19,6 +19,7 @@ trait ParserExpressions {
     TokenType.INT -> parseInteger,
     TokenType.STR -> parseString,
     TokenType.LPAREN -> parseGroupedExpression,
+    TokenType.LBRACKET -> parseArrayLiteral,
     TokenType.MINUS -> parsePrefixExpression,
     TokenType.TRUE -> parseBoolean,
     TokenType.IF -> parseIfExpression,
@@ -144,7 +145,9 @@ trait ParserExpressions {
   def parseExpression(precedence: ExpressionOrdering): Option[Expression] = {
     var leftExp: Option[Expression] =
       prefixParserFns.get(cToken.getOrElse(EOFToken).tokenType) match {
-        case Some(function: PrefixParserFn) => function()
+        case Some(function: PrefixParserFn) =>
+          println("Found a function!")
+          function()
         case None =>
           cToken match {
             case Some(Token(SEMICOLON, _)) =>
@@ -157,6 +160,7 @@ trait ParserExpressions {
     while ({
       pToken.getOrElse(EOFToken).tokenType match {
         case SEMICOLON => false
+        case COMMA => false
         case EOF       => false
         case _         => true
       }
@@ -174,6 +178,7 @@ trait ParserExpressions {
         case None =>
       }
     }
+    println(leftExp)
     leftExp
   }
 
@@ -234,6 +239,54 @@ trait ParserExpressions {
     parser.errors ++= Seq(
       ParserError(s"No prefix parser function found for $token")
     )
+  }
+
+  def parseArrayLiteral(): Option[ArrayLiteral] = {
+    logger.debug("Start of array expression")
+    (cToken, pToken) match {
+      case (Some(Token(LBRACKET, _)), Some(Token(RBRACKET, _))) =>
+        parser.nextTokens()
+        Some(ArrayLiteral(cToken.getOrElse(EOFToken), Seq.empty[Expression]))
+      case (Some(Token(LBRACKET, _)), Some(_)) =>
+        var arguments = Seq.empty[Expression]
+        parser.nextTokens()
+        parser.parseExpression(Lowest) match {
+          case None =>
+            println("Bad expression")
+            None
+
+          case Some(expression) =>
+            println("Good Expression")
+            arguments :+= expression
+            while (
+              pToken match {
+                case Some(Token(COMMA, _)) =>
+                  println(s"Continuing, ptoken = $pToken")
+                  true
+                case _                     =>
+                  println(s"Stopping, ptoken = $pToken")
+                  false
+              }
+            ) {
+              parser.nextTokens()
+              parser.nextTokens()
+              parser.parseExpression(Lowest) match {
+                case Some(expression) =>
+                  println("continue to be good expression!")
+                  arguments :+= expression
+                case _ =>
+              }
+            }
+            if (!parser.expectPeek(RBRACKET)) {
+              println(s"Actually, peek is $pToken")
+              None
+            } else {
+              println("Returning array literal!")
+              Some(ArrayLiteral(cToken.getOrElse(EOFToken), arguments))
+            }
+        }
+      case _ => None
+    }
   }
 
   def parseGroupedExpression(): Option[Expression] = {
