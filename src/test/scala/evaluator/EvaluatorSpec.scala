@@ -111,6 +111,21 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
       |""".stripMargin should failWithMessage("type mismatch: BOOLEAN + BOOLEAN")
   }
 
+  "Array operations" should "work" in {
+    "[] + [1];" should beInspectedInto("[1]")
+    "[1] + [1, 2, 3];" should beInspectedInto("[1,1,2,3]")
+    "[1,2,3] == [1, 2, 3];" should beInspectedInto("true")
+    "[1,2,3] == [1, 3, 2];" should beInspectedInto("false")
+    """
+      |let addString = fn(array, string) {
+      | return array + [string];
+      |};
+      |let array = [1,2,3];
+      |let string = "hey";
+      |addString(array, string);
+      |""".stripMargin should beInspectedInto("[1,2,3,hey]")
+  }
+
   "Let Statements" should "work" in {
     "let a = 5; a;" should beEqualTo(5)
     "let a = 5 * 5; a;" should beEqualTo(25)
