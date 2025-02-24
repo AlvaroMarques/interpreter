@@ -90,6 +90,10 @@ case class Lexer(input: String, position: Int = -1, ch: Byte = 0)
             (Some(Token(TokenType.ASSIGN, ch.toChar.toString)), next)
         case ';' =>
           (Some(Token(TokenType.SEMICOLON, ch.toChar.toString)), next)
+        case '[' =>
+          (Some(Token(TokenType.LBRACKET, ch.toChar.toString)), next)
+        case ']' =>
+          (Some(Token(TokenType.LBRACKET, ch.toChar.toString)), next)
         case '(' =>
           (Some(Token(TokenType.LPAREN, ch.toChar.toString)), next)
         case ')' =>

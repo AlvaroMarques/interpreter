@@ -34,10 +34,12 @@ object TokenType extends Enum[TokenType] {
   object RPAREN extends TokenType { override def toString = ")" }
   object LBRACE extends TokenType { override def toString = "{" }
   object RBRACE extends TokenType { override def toString = "}" }
+  object LBRACKET extends TokenType { override def toString = "[" }
+  object RBRACKET extends TokenType { override def toString = "]" }
 
   // Keywords
   object FUNCTION extends TokenType { override def toString = "fn" }
-  object LET extends TokenType { override def toString = "LET" }
+  object LET extends TokenType { override def toString = "let" }
   object ELSE extends TokenType { override def toString = "else" }
   object IF extends TokenType { override def toString = "if" }
   object RETURN extends TokenType { override def toString = "return" }
