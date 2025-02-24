@@ -214,7 +214,6 @@ case class Evaluator() {
     if (statementsEvaluations.isEmpty) {
       None
     } else {
-      logger.info(s"$statementsEvaluations")
       statementsEvaluations
         .reduce(
           (a, b) => (a, b) match {
@@ -234,7 +233,6 @@ case class Evaluator() {
     if (statementsEvaluations.isEmpty) {
       None
     } else {
-      logger.info(s"$statementsEvaluations")
       statementsEvaluations
         .reduce(
           (a, b) => (a, b) match {

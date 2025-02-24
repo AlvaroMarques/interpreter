@@ -18,7 +18,7 @@ object REPL {
         println(parser.errors.mkString("\n\t"))
       } else {
         eval.evaluate(program, context = "__global__") match {
-          case Some(value) => println(value)
+          case Some(value) => println(value.inspect)
           case _ => println("Evaluation error!")
         }
       }
