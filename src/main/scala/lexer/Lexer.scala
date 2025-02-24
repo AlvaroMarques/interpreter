@@ -56,6 +56,7 @@ case class Lexer(input: String, position: Int = -1, ch: Byte = 0)
           recursiveGetToken(nextLexer, currentIterator ++ Iterator(Some(token))  )
         case (Some(Token(TokenType.EOF, literal)), _: Lexer) =>
           currentIterator ++ Iterator(Some(Token(TokenType.EOF, literal)))
+        case _ => Iterator(None)
       }
     }
     recursiveGetToken(this)

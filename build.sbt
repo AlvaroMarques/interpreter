@@ -12,7 +12,9 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-api" % "2.0.0"
 )
 
-unmanagedResourceDirectories in Compile += baseDirectory.value / "src" / "main" / "resources"
+Compile / unmanagedResourceDirectories += baseDirectory.value / "src" / "main" / "resources"
+
+Compile / mainClass := Some("main")
 
 lazy val root = (project in file("."))
   .settings(
