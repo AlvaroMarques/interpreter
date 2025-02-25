@@ -162,4 +162,15 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "let x = fn (c) { if (c < 10) { c + x(c+1); } else { c; }}; x(0);" should beEqualTo(55)
     "fn (c) { if (c < 10) { c + 1} else { c; }}(0);" should beEqualTo(1)
   }
+
+  "Builtin Functions" should "run" in {
+    "print(10)" should beEqualTo(value = None)
+    """
+      |let c = 10;
+      |while (c > 0) {
+      | let c = c - 1;
+      | print(c, " ");
+      |};
+      |""".stripMargin should beEqualTo(value = None)
+  }
 }

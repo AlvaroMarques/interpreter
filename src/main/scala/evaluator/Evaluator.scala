@@ -1,19 +1,24 @@
 package evaluator
 
 import com.typesafe.scalalogging.Logger
+import evaluator.builtin.PrintFn
 import evaluator.objects.BooleanObject.{False, True}
 import evaluator.objects._
 import parser.ast.expressions._
 import parser.ast.statements.{BlockStatement, ExpressionStatement, LetStatement, ReturnStatement}
 import parser.ast.{Expression, Node, Program, Statement}
 
-case class Evaluator() {
+case class Evaluator(initialContext: String) {
 
   val logger: Logger = Logger(Evaluator.getClass)
-  val environment: Environment = new Environment
+  val builtinFns: Seq[BuiltinFunctionObject] = Seq(
+    PrintFn
+  )
+  val environment: Environment = Environment(builtinFns, initialContext)
+
   var error: Option[ErrorObject] = None
 
-  def evaluate(node: Node, context: String): Option[Anything] = {
+  def evaluate(node: Node, context: String = initialContext): Option[Anything] = {
     node match {
       case node: Program => evalStatements(node.statements, context)
       case node: ExpressionStatement => node.expression match {
@@ -38,7 +43,7 @@ case class Evaluator() {
           Some(ArrayObject(evaluatedValues.flatten))
         }
       case node: FunctionLiteral =>
-        Some(FunctionObject(node.parameters, node.body))
+        Some(CustomFunctionObject(node.parameters, node.body))
       case node: CallExpression =>
         node.function match {
           case function: Identifier =>
@@ -100,13 +105,18 @@ case class Evaluator() {
 
   def evalFunction(f: FunctionObject, arguments: Seq[Expression], context: String): Option[Anything] = {
     val localContext = s"${f.hashCode().toString}.$context"
-    f.parameters.zip(arguments).map {
-      case (identifier: Identifier, expression: Expression) =>
-        environment.addObject(context = localContext,
-          variable = identifier.value,
-          value = evaluate(expression, context).getOrElse(ErrorObject(s"Error parsing argument ${identifier.value} on function call")))
+    f match {
+      case f: CustomFunctionObject =>
+        f.parameters.zip(arguments).map {
+          case (identifier: Identifier, expression: Expression) =>
+            environment.addObject(context = localContext,
+              variable = identifier.value,
+              value = evaluate(expression, context).getOrElse(ErrorObject(s"Error parsing argument ${identifier.value} on function call")))
+        }
+        evaluate(f.body, localContext)
+      case f: BuiltinFunctionObject =>
+        f.executor(arguments.map(arg => evaluate(arg, context).getOrElse(NullObject)))
     }
-    evaluate(f.body, localContext)
   }
 
   def evalBangOperator(expression: Anything): Option[BooleanObject] = {

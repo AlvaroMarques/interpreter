@@ -4,9 +4,7 @@ import evaluator.{Anything, ObjectType}
 import parser.ast.expressions.Identifier
 import parser.ast.statements.BlockStatement
 
-trait FunctionObject
-  extends Anything {
-
+case class CustomFunctionObject(parameters: Seq[Identifier], body: BlockStatement) extends Anything {
   override def objectType: ObjectType = ObjectType.Function
   override def inspect: String = this.toString
 }

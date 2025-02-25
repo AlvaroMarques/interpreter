@@ -1,9 +1,11 @@
 package evaluator
 
-import evaluator.objects.NullObject
+import evaluator.objects.{BuiltinFunctionObject, NullObject}
 
-class Environment {
-  var store: Map[String, Anything] = Map.empty[String, Anything]
+case class Environment(builtin: Seq[BuiltinFunctionObject], initialContext: String) {
+  var store: Map[String, Anything] = builtin.map{
+    fn => (variableName(initialContext, fn.name) -> fn)
+  }.toMap
 
   def addObject(context: String, variable: String, value: Anything): Option[Anything] = {
     store = store ++ Map(variableName(context, variable) -> value)

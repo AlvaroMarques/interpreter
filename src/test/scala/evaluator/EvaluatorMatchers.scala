@@ -18,7 +18,7 @@ trait EvaluatorMatchers {
       val lexer = Lexer(input)
       val parser = Parser(lexer)
       val program = parser.parseProgram()
-      val eval = Evaluator()
+      val eval = Evaluator("__global__")
       val value = eval.evaluate(program, context = "__global__")
 
       MatchResult(
@@ -39,7 +39,7 @@ trait EvaluatorMatchers {
       val lexer = Lexer(input)
       val parser = Parser(lexer)
       val program = parser.parseProgram()
-      val eval = Evaluator()
+      val eval = Evaluator("__global__")
       val value = eval.evaluate(program, context = "__global__")
       MatchResult(
         matches = value match {
@@ -63,7 +63,7 @@ trait EvaluatorMatchers {
       val lexer = Lexer(input)
       val parser = Parser(lexer)
       val program = parser.parseProgram()
-      val eval = Evaluator()
+      val eval = Evaluator("__global__")
       val value = eval.evaluate(program, context = "__global__")
       MatchResult(
         matches = value match {
@@ -87,7 +87,7 @@ trait EvaluatorMatchers {
       val lexer = Lexer(input)
       val parser = Parser(lexer)
       val program = parser.parseProgram()
-      val eval = Evaluator()
+      val eval = Evaluator("__global__")
       val value = eval.evaluate(program, context = "__global__")
       MatchResult(
         matches = value match {
