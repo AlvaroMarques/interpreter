@@ -89,7 +89,13 @@ case class Evaluator() {
           variable = identifier.value,
           value = evaluate(expression, context).getOrElse(ErrorObject(s"Error parsing argument ${identifier.value} on function call")))
     }
-    evaluate(f.body, localContext)
+    evaluate(f.body, localContext) match {
+      case Some(obj) =>
+        environment.deleteContext(localContext)
+        Some(obj)
+      case None =>
+        None
+    }
   }
 
   def evalFunction(f: FunctionObject, arguments: Seq[Expression], context: String): Option[Anything] = {

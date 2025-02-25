@@ -12,6 +12,12 @@ class Environment {
 
   private[evaluator] def variableName(context: String, variable: String): String = s"$variable.$context"
 
+  def deleteContext(context: String): Unit = {
+    store = store.filter{
+      case (key, _) => key.endsWith(context)
+    }
+  }
+
   def getObject(context: String, variable: String): Option[Anything] = {
     if (context == "") {
       None
