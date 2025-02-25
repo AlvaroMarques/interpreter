@@ -48,4 +48,5 @@ object TokenType extends Enum[TokenType] {
   object TRUE extends TokenType { override def toString = "true" }
   object FALSE extends TokenType { override def toString = "false" }
 
+  object WHILE extends TokenType { override def toString = "while" }
 }

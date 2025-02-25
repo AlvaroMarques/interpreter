@@ -22,6 +22,12 @@ class LexerSpec extends AnyFlatSpec {
 
   }
 
+  "while" should "be parsed" in {
+    val input = "while (true) { 1 + 1 }"
+    val (_, lexer: Lexer) = Lexer(input).token
+    println(lexer.getTokens.mkString(","))
+  }
+
   "arrays" should "be parsed" in {
     val input = "[1, 10, a, \"hm\"]"
     val (_, lexer: Lexer) = Lexer(input).token
