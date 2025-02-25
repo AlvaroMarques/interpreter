@@ -27,7 +27,7 @@ trait EvaluatorMatchers {
             t.message == expectedMessage
           case _ => false
         },
-        s"""'$input' should have the following error: '$expectedMessage' but instead got ${eval.error}"""
+        s"""'$input' should have the following error: '$expectedMessage' but instead got ${eval.error} on eval ${value}"""
         ,
         s"The program $input returned the right type!"
       )

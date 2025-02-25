@@ -133,6 +133,29 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "let a = 5; let b = a; let c = a + b + 5; c;" should beEqualTo(15)
   }
 
+  "While Statements" should "work" in {
+    """
+      |let c = 0;
+      |let a = [];
+      |while ( c < 3 ) {
+      |    let c = c + 1;
+      |    let a = a + [c];
+      |}
+      |a;
+      |""".stripMargin should beInspectedInto("[1,2,3]")
+
+    """
+      |let c = 0;
+      |let a = [];
+      |while ( c < 3 ) {
+      |    let c = c + 1;
+      |    let a = a + [c];
+      |}
+      |c;
+      |""".stripMargin should beEqualTo(3)
+
+  }
+
   "Function Statements" should "work" in {
     "let x = fn(y) { return y + 1; }; x(10); " should beEqualTo(11)
     "let x = fn(a, b) { if (a > b) { a } else { b } }; x(2, 1) + x(2, 3); " should beEqualTo(5)

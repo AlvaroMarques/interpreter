@@ -67,6 +67,8 @@ case class Evaluator() {
             evalPrefixExpression(node.operator, right)
           case _ => None
         }
+      case node: WhileExpression =>
+        evalWhileExpression(node, context)
       case node: IfExpression =>
         evalIfExpression(node, context)
       case ReturnStatement(_, returnValue) =>
@@ -108,6 +110,37 @@ case class Evaluator() {
       case IntegerObject(_) => Some(False)
       case _ => Some(False)
     }
+  }
+
+  def evaluateCondition(condition: Expression, context: String): Option[Anything] = {
+    evaluate(condition, context) match {
+      case Some(condition: BooleanObject) => Some(condition)
+      case Some(_: NullObjectConstructor) => Some(False)
+      case Some(s: StringObject) if s.value == "" => Some(False)
+      case Some(i: IntegerObject) if i.value == 0 => Some(False)
+      case Some(a: ArrayObject) if a.values.isEmpty => Some(False)
+      case Some(errorObject: ErrorObject) => Some(errorObject)
+      case Some(_) => Some(True)
+      case None => None
+    }
+  }
+
+  def evalWhileExpression(expression: WhileExpression, context: String): Option[Anything] = {
+    while (
+      evaluateCondition(expression.condition, context) match {
+        case Some(condition: BooleanObject) => condition.value
+        case Some(e: ErrorObject) => return Some(e)
+        case None => return Some(ErrorObject(s"While expression failed on parsing the condition ${expression.condition.string}"))
+        case _ => false
+      }
+    ) {
+      evaluate(expression.consequence, context) match {
+        case Some(e: ErrorObject) => return Some(e)
+        case None => return Some(ErrorObject(s"While expression failed on parsing the expression ${expression.consequence.string}"))
+        case _ =>
+      }
+    }
+    Some(NullObject)
   }
 
   def evalIfExpression(expression: IfExpression, context: String): Option[Anything] = {
@@ -218,6 +251,7 @@ case class Evaluator() {
         .reduce(
           (a, b) => (a, b) match {
             case (Some(e: ErrorObject), _) => Some(e)
+            case (_, Some(e: ErrorObject)) => Some(e)
             case (Some(rv: ReturnValue), _) => Some(rv)
             case (_, Some(b)) => Some(b)
             case _ => None
