@@ -4,7 +4,7 @@ import evaluator.objects.{BuiltinFunctionObject, NullObject}
 
 case class Environment(builtin: Seq[BuiltinFunctionObject], initialContext: String) {
   var store: Map[String, Anything] = builtin.map{
-    fn => (variableName(initialContext, fn.name) -> fn)
+    fn => variableName(initialContext, fn.name) -> fn
   }.toMap
 
   def addObject(context: String, variable: String, value: Anything): Option[Anything] = {
