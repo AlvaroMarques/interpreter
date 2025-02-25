@@ -23,6 +23,7 @@ trait ParserExpressions {
     TokenType.MINUS -> parsePrefixExpression,
     TokenType.TRUE -> parseBoolean,
     TokenType.IF -> parseIfExpression,
+    TokenType.WHILE -> parseWhileExpression,
     TokenType.FUNCTION -> parseFunctionExpression
   )
   final val infixParserFns: Map[TokenType, InfixParserFn] = Map(
@@ -295,6 +296,29 @@ trait ParserExpressions {
           None
         }
       case _ => None
+    }
+  }
+
+  def parseWhileExpression(): Option[WhileExpression] = {
+    val token = parser.cToken
+    if (!expectPeek(LPAREN)) {
+      None
+    } else {
+      val condition = parser.parseGroupedExpression()
+      parser.nextTokens() // Jumping over RPAREN
+      val consequence = parser.parseBlockStatement()
+      (condition, consequence) match {
+        case (Some(condition), Some(consequence)) =>
+          (cToken, pToken) match {
+            case (Some(Token(RBRACE, _)), _) =>
+              Some(
+                WhileExpression(token.getOrElse(EOFToken), condition, consequence)
+              )
+            case _ => None
+
+          }
+        case _ => None
+      }
     }
   }
 

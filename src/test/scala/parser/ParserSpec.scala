@@ -331,6 +331,10 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
     p.errors shouldBe Matchers.empty
   }
 
+  "While expressions" should "work" in {
+    "while (x < y) { let y = (x + 1);return 5; }" should beParsedCorrectly
+  }
+
   "If expressions" should "work" in {
     "if (x < y)  { let y = (x + 1);return 5; } else { return y; }" should beParsedCorrectly
   }
