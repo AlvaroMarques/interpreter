@@ -173,5 +173,6 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
       | print(c, "\n");
       |};
       |""".stripMargin should beEqualTo(value = None)
+
   }
 }
