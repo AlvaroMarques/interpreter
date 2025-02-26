@@ -19,7 +19,7 @@ object REPL {
       } else {
         eval.evaluate(program) match {
           case Some(value) =>
-          case _ => println("Evaluation error!")
+          case _           => println("Evaluation error!")
         }
       }
     }

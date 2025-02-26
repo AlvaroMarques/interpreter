@@ -5,7 +5,13 @@ import org.scalatest.Assertions.fail
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import parser.ast.{Expression, Statement}
-import parser.ast.expressions.{ArrayLiteral, BooleanLiteral, Identifier, IntegerLiteral, StringLiteral}
+import parser.ast.expressions.{
+  ArrayLiteral,
+  BooleanLiteral,
+  Identifier,
+  IntegerLiteral,
+  StringLiteral
+}
 import parser.ast.statements.{ExpressionStatement, LetStatement}
 
 trait ParserTestUtils extends ParserMatchers {
@@ -79,7 +85,10 @@ trait ParserTestUtils extends ParserMatchers {
       case stmt: ExpressionStatement =>
         stmt.expression match {
           case Some(ident: StringLiteral) =>
-            assert(ident.value == expectedValue, s"${ident.tokenLiteral} did not equal $expectedValue")
+            assert(
+              ident.value == expectedValue,
+              s"${ident.tokenLiteral} did not equal $expectedValue"
+            )
           case _ => fail("Statement expression should be StringLiteral")
         }
 
@@ -98,7 +107,10 @@ trait ParserTestUtils extends ParserMatchers {
       case stmt: ExpressionStatement =>
         stmt.expression match {
           case Some(ident: ArrayLiteral) =>
-            assert(ident.values == expectedValue, s"Values should be $expectedValue but are actually ${ident.string}")
+            assert(
+              ident.values == expectedValue,
+              s"Values should be $expectedValue but are actually ${ident.string}"
+            )
           case _ => fail("Statement expression should be IntegerLiteral")
         }
 

@@ -8,4 +8,4 @@ case class NullObjectConstructor() extends Anything {
   override def inspect: String = "null"
 }
 
-object NullObject extends  NullObjectConstructor()
+object NullObject extends NullObjectConstructor()

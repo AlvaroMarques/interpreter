@@ -10,5 +10,5 @@ case class StringLiteral(token: Token) extends Expression {
   override def tokenLiteral: String = token.literal
   def value: String = tokenLiteral.substring(1, token.literal.length - 1)
 
-  override def string: String = s"\"${token.literal}\""
+  override def string: String = s"""\"${token.literal}\""""
 }

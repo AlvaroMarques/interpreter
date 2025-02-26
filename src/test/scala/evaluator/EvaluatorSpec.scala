@@ -17,7 +17,9 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "true" should beEqualTo(true)
 
     "\"hey\"" should beEqualTo("hey")
-    "\" you need to pick your afro \\\"daddy\\\" \"" should beEqualTo(" you need to pick your afro \\\"daddy\\\" ")
+    "\" you need to pick your afro \\\"daddy\\\" \"" should beEqualTo(
+      " you need to pick your afro \\\"daddy\\\" "
+    )
 
     "[1, 2, \"hey\"]" should beInspectedInto("[1,2,hey]")
     "[1, 2,[1,2,3,\"hey\"]]" should beInspectedInto("[1,2,[1,2,3,hey]]")
@@ -98,8 +100,12 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
     "5 + true; 5;" should failWithMessage("type mismatch: INTEGER + BOOLEAN")
     "-true" should failWithMessage("unknown operator: -BOOLEAN")
     "true + false;" should failWithMessage("type mismatch: BOOLEAN + BOOLEAN")
-    "if (10 > 1) ( true + false; )" should failWithMessage("type mismatch: BOOLEAN + BOOLEAN")
-    "5; true + false; 5" should failWithMessage("type mismatch: BOOLEAN + BOOLEAN")
+    "if (10 > 1) ( true + false; )" should failWithMessage(
+      "type mismatch: BOOLEAN + BOOLEAN"
+    )
+    "5; true + false; 5" should failWithMessage(
+      "type mismatch: BOOLEAN + BOOLEAN"
+    )
     """
       |if (10 > 1) {
       |  if (10 > 1) {
@@ -108,7 +114,9 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
       |
       |  return 1;
       |}
-      |""".stripMargin should failWithMessage("type mismatch: BOOLEAN + BOOLEAN")
+      |""".stripMargin should failWithMessage(
+      "type mismatch: BOOLEAN + BOOLEAN"
+    )
   }
 
   "Array operations" should "work" in {
@@ -158,8 +166,12 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
 
   "Function Statements" should "work" in {
     "let x = fn(y) { return y + 1; }; x(10); " should beEqualTo(11)
-    "let x = fn(a, b) { if (a > b) { a } else { b } }; x(2, 1) + x(2, 3); " should beEqualTo(5)
-    "let x = fn (c) { if (c < 10) { c + x(c+1); } else { c; }}; x(0);" should beEqualTo(55)
+    "let x = fn(a, b) { if (a > b) { a } else { b } }; x(2, 1) + x(2, 3); " should beEqualTo(
+      5
+    )
+    "let x = fn (c) { if (c < 10) { c + x(c+1); } else { c; }}; x(0);" should beEqualTo(
+      55
+    )
     "fn (c) { if (c < 10) { c + 1} else { c; }}(0);" should beEqualTo(1)
   }
 

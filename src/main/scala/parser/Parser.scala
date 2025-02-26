@@ -23,13 +23,15 @@ case class Parser(lexer: Lexer)
 
   var iteratorCounter: Int = 0
 
-  def cToken: Option[Token] = if (iteratorCounter < tokens.length)
-    tokens(iteratorCounter).headOption
-  else None
+  def cToken: Option[Token] =
+    if (iteratorCounter < tokens.length)
+      tokens(iteratorCounter).headOption
+    else None
 
-  def pToken: Option[Token] = if (iteratorCounter < tokens.length)
-    tokens(iteratorCounter).tail.headOption
-  else None
+  def pToken: Option[Token] =
+    if (iteratorCounter < tokens.length)
+      tokens(iteratorCounter).tail.headOption
+    else None
 
   def expectPeek(tokenType: TokenType): Boolean = {
     pToken match {
@@ -78,13 +80,11 @@ case class Parser(lexer: Lexer)
       case Some(token) if token.tokenType == LBRACE =>
         nextTokens()
         var statements = Seq.empty[Statement]
-        while (
-          cToken.getOrElse(EOFToken).tokenType match {
-            case TokenType.RBRACE => false
-            case TokenType.EOF    => false
-            case _                => true
-          }
-        ) {
+        while (cToken.getOrElse(EOFToken).tokenType match {
+                 case TokenType.RBRACE => false
+                 case TokenType.EOF    => false
+                 case _                => true
+               }) {
           statements ++= Seq(parseStatement()).flatten
           nextTokens()
         }

@@ -59,7 +59,7 @@ case class Lexer(input: String, position: Int = -1, ch: Char = 0)
       lexer.token match {
         case (Some(token), nextLexer: Lexer)
             if token.tokenType != TokenType.EOF =>
-          recursiveGetToken(nextLexer, currentIterator ++ Iterator(Some(token))  )
+          recursiveGetToken(nextLexer, currentIterator ++ Iterator(Some(token)))
         case (Some(Token(TokenType.EOF, literal)), _: Lexer) =>
           currentIterator ++ Iterator(Some(Token(TokenType.EOF, literal)))
         case _ =>
