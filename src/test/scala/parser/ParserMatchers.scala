@@ -14,8 +14,8 @@ trait ParserMatchers {
         matches = program.string == input && parser.errors.isEmpty,
         s"""'$input' should be correctly parsed, but instead the Parser returned this: '${program.string}'
            | also, the following errors were found: ${parser.errors
-          .map(_.message)
-          .mkString("\n\t")}
+             .map(_.message)
+             .mkString("\n\t")}
            |""".stripMargin,
         s"The program $input was correctly parsed!"
       )

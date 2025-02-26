@@ -35,5 +35,4 @@ object ExpressionOrdering extends Enum[ExpressionOrdering] {
 
   case object Call extends ExpressionOrdering
 
-
 }

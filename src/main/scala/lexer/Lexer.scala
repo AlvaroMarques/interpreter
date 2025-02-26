@@ -17,31 +17,31 @@ case class Lexer(input: String, position: Int = -1, ch: Char = 0)
   def readIdentifier: (String, Lexer) = {
     if (isLetter(ch)) {
       val (identifierTail: String, nextLexer: Lexer) = next.readIdentifier
-      (ch.toChar.toString ++ identifierTail, nextLexer)
+      (ch.toString ++ identifierTail, nextLexer)
     } else {
       ("", this)
     }
   }
 
   def readString: (String, Lexer) = {
-    if ((nextChar != '\"' || (nextChar == '\"' && ch.toChar == '\\')) && ch != 0) {
-      (ch.toChar, nextChar) match {
+    if ((nextChar != '\"' || (nextChar == '\"' && ch == '\\')) && ch != 0) {
+      (ch, nextChar) match {
         case ('\\', 'n') =>
           val (string, nextLexer) = next.readString
           ('\n'.toString ++ string, nextLexer)
         case _ =>
           val (string, nextLexer) = next.readString
-          (ch.toChar.toString ++ string, nextLexer)
+          (ch.toString ++ string, nextLexer)
       }
     } else {
-      (ch.toChar.toString ++ "\"", next)
+      (ch.toString ++ "\"", next)
     }
   }
 
   def readDigit: (String, Lexer) = {
     if (isDigit(ch)) {
       val (identifierTail: String, nextLexer: Lexer) = next.readDigit
-      (ch.toChar.toString ++ identifierTail, nextLexer)
+      (ch.toString ++ identifierTail, nextLexer)
     } else {
       ("", this)
     }
@@ -59,7 +59,7 @@ case class Lexer(input: String, position: Int = -1, ch: Char = 0)
       lexer.token match {
         case (Some(token), nextLexer: Lexer)
             if token.tokenType != TokenType.EOF =>
-          recursiveGetToken(nextLexer, currentIterator ++ Iterator(Some(token))  )
+          recursiveGetToken(nextLexer, currentIterator ++ Iterator(Some(token)))
         case (Some(Token(TokenType.EOF, literal)), _: Lexer) =>
           currentIterator ++ Iterator(Some(Token(TokenType.EOF, literal)))
         case _ =>
@@ -89,54 +89,54 @@ case class Lexer(input: String, position: Int = -1, ch: Char = 0)
               Some(
                 Token(
                   TokenType.EQ,
-                  ch.toChar.toString ++ next.ch.toChar.toString
+                  ch.toString ++ next.ch.toString
                 )
               ),
               next.next
             )
           } else
-            (Some(Token(TokenType.ASSIGN, ch.toChar.toString)), next)
+            (Some(Token(TokenType.ASSIGN, ch.toString)), next)
         case ';' =>
-          (Some(Token(TokenType.SEMICOLON, ch.toChar.toString)), next)
+          (Some(Token(TokenType.SEMICOLON, ch.toString)), next)
         case '[' =>
-          (Some(Token(TokenType.LBRACKET, ch.toChar.toString)), next)
+          (Some(Token(TokenType.LBRACKET, ch.toString)), next)
         case ']' =>
-          (Some(Token(TokenType.RBRACKET, ch.toChar.toString)), next)
+          (Some(Token(TokenType.RBRACKET, ch.toString)), next)
         case '(' =>
-          (Some(Token(TokenType.LPAREN, ch.toChar.toString)), next)
+          (Some(Token(TokenType.LPAREN, ch.toString)), next)
         case ')' =>
-          (Some(Token(TokenType.RPAREN, ch.toChar.toString)), next)
+          (Some(Token(TokenType.RPAREN, ch.toString)), next)
         case ',' =>
-          (Some(Token(TokenType.COMMA, ch.toChar.toString)), next)
+          (Some(Token(TokenType.COMMA, ch.toString)), next)
         case '-' =>
-          (Some(Token(TokenType.MINUS, ch.toChar.toString)), next)
+          (Some(Token(TokenType.MINUS, ch.toString)), next)
         case '+' =>
-          (Some(Token(TokenType.PLUS, ch.toChar.toString)), next)
+          (Some(Token(TokenType.PLUS, ch.toString)), next)
         case '{' =>
-          (Some(Token(TokenType.LBRACE, ch.toChar.toString)), next)
+          (Some(Token(TokenType.LBRACE, ch.toString)), next)
         case '}' =>
-          (Some(Token(TokenType.RBRACE, ch.toChar.toString)), next)
+          (Some(Token(TokenType.RBRACE, ch.toString)), next)
         case '*' =>
-          (Some(Token(TokenType.ASTERISK, ch.toChar.toString)), next)
+          (Some(Token(TokenType.ASTERISK, ch.toString)), next)
         case '/' =>
-          (Some(Token(TokenType.SLASH, ch.toChar.toString)), next)
+          (Some(Token(TokenType.SLASH, ch.toString)), next)
         case '<' =>
-          (Some(Token(TokenType.LT, ch.toChar.toString)), next)
+          (Some(Token(TokenType.LT, ch.toString)), next)
         case '>' =>
-          (Some(Token(TokenType.GT, ch.toChar.toString)), next)
+          (Some(Token(TokenType.GT, ch.toString)), next)
         case '!' =>
           if (next.ch == '=') {
             (
               Some(
                 Token(
                   TokenType.NOT_EQ,
-                  ch.toChar.toString ++ next.ch.toChar.toString
+                  ch.toString ++ next.ch.toString
                 )
               ),
               next.next
             )
           } else {
-            (Some(Token(TokenType.BANG, ch.toChar.toString)), next)
+            (Some(Token(TokenType.BANG, ch.toString)), next)
           }
         case 0 =>
           (Some(Token(TokenType.EOF, "")), next)
@@ -165,7 +165,6 @@ case class Lexer(input: String, position: Int = -1, ch: Char = 0)
 }
 
 object Lexer {
-
   final val identifierLookupTable: Map[String, TokenType] = Map(
     "fn" -> TokenType.FUNCTION,
     "return" -> TokenType.RETURN,
@@ -174,6 +173,9 @@ object Lexer {
     "let" -> TokenType.LET,
     "if" -> TokenType.IF,
     "else" -> TokenType.ELSE,
-    "while" -> TokenType.WHILE
+    "while" -> TokenType.WHILE,
+    "mas" -> TokenType.MAS,
+    "antes" -> TokenType.ANTES,
+    TokenType.BAGUGA.toString -> TokenType.BAGUGA
   )
 }

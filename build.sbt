@@ -18,5 +18,5 @@ Compile / mainClass := Some("main")
 
 lazy val root = (project in file("."))
   .settings(
-    name := "interpret"
+    name := "baguga"
   )

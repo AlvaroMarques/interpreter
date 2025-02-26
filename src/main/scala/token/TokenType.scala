@@ -49,4 +49,9 @@ object TokenType extends Enum[TokenType] {
   object FALSE extends TokenType { override def toString = "false" }
 
   object WHILE extends TokenType { override def toString = "while" }
+
+  object MAS extends TokenType { override def toString = "mas" }
+  object ANTES extends TokenType { override def toString = "antes" }
+  object POINTUP extends TokenType { override def toString = "☝\uFE0F" }
+  object BAGUGA extends TokenType { override def toString = "BAGUGA" }
 }

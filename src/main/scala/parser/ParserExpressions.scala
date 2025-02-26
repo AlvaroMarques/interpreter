@@ -50,13 +50,11 @@ trait ParserExpressions {
   )
 
   def parseExpressionMock(): Some[Expression] = {
-    while (
-      cToken.getOrElse(EOFToken).tokenType match {
-        case EOF       => false
-        case SEMICOLON => false
-        case _         => true
-      }
-    ) {
+    while (cToken.getOrElse(EOFToken).tokenType match {
+             case EOF       => false
+             case SEMICOLON => false
+             case _         => true
+           }) {
       nextTokens()
     }
     Some(Identifier(EOFToken, ""))
@@ -68,11 +66,9 @@ trait ParserExpressions {
       case Some(Token(TokenType.LPAREN, _)) =>
         logger.debug("here")
         var identifiers = Seq.empty[Identifier]
-        while (
-          pToken
-            .getOrElse(EOFToken)
-            .tokenType != TokenType.RPAREN && pToken.isDefined
-        ) {
+        while (pToken
+                 .getOrElse(EOFToken)
+                 .tokenType != TokenType.RPAREN && pToken.isDefined) {
           logger.debug("New iteration: ")
           nextTokens()
           (cToken, pToken) match {
@@ -160,7 +156,7 @@ trait ParserExpressions {
     while ({
       pToken.getOrElse(EOFToken).tokenType match {
         case SEMICOLON => false
-        case COMMA => false
+        case COMMA     => false
         case EOF       => false
         case _         => true
       }
@@ -193,12 +189,10 @@ trait ParserExpressions {
         parser.parseExpression(Lowest) match {
           case Some(expression) =>
             arguments :+= expression
-            while (
-              pToken match {
-                case Some(Token(COMMA, _)) => true
-                case _                     => false
-              }
-            ) {
+            while (pToken match {
+                     case Some(Token(COMMA, _)) => true
+                     case _                     => false
+                   }) {
               parser.nextTokens()
               parser.nextTokens()
               parser.parseExpression(Lowest) match {
@@ -255,14 +249,12 @@ trait ParserExpressions {
 
           case Some(expression) =>
             arguments :+= expression
-            while (
-              pToken match {
-                case Some(Token(COMMA, _)) =>
-                  true
-                case _                     =>
-                  false
-              }
-            ) {
+            while (pToken match {
+                     case Some(Token(COMMA, _)) =>
+                       true
+                     case _ =>
+                       false
+                   }) {
               parser.nextTokens()
               parser.nextTokens()
               parser.parseExpression(Lowest) match {
@@ -312,7 +304,11 @@ trait ParserExpressions {
           (cToken, pToken) match {
             case (Some(Token(RBRACE, _)), _) =>
               Some(
-                WhileExpression(token.getOrElse(EOFToken), condition, consequence)
+                WhileExpression(
+                  token.getOrElse(EOFToken),
+                  condition,
+                  consequence
+                )
               )
             case _ => None
 

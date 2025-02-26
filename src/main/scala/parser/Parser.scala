@@ -4,6 +4,7 @@ import lexer.Lexer
 import parser.Parser.EOFToken
 import parser.ast.expressions.ExpressionOrdering.Lowest
 import parser.ast.statements.{
+  BagugaStatement,
   BlockStatement,
   ExpressionStatement,
   LetStatement,
@@ -23,13 +24,15 @@ case class Parser(lexer: Lexer)
 
   var iteratorCounter: Int = 0
 
-  def cToken: Option[Token] = if (iteratorCounter < tokens.length)
-    tokens(iteratorCounter).headOption
-  else None
+  def cToken: Option[Token] =
+    if (iteratorCounter < tokens.length)
+      tokens(iteratorCounter).headOption
+    else None
 
-  def pToken: Option[Token] = if (iteratorCounter < tokens.length)
-    tokens(iteratorCounter).tail.headOption
-  else None
+  def pToken: Option[Token] =
+    if (iteratorCounter < tokens.length)
+      tokens(iteratorCounter).tail.headOption
+    else None
 
   def expectPeek(tokenType: TokenType): Boolean = {
     pToken match {
@@ -55,6 +58,9 @@ case class Parser(lexer: Lexer)
       val statement = cToken match {
         case Some(Token(LET, _))    => parseLetStatement()
         case Some(Token(RETURN, _)) => parseReturnStatement()
+        case Some(Token(LBRACE, _)) =>
+          println("Aqui")
+          parseBagugaStatement()
         case _ =>
           parseExpressionsStatement()
       }
@@ -67,24 +73,75 @@ case class Parser(lexer: Lexer)
   def parseStatement(): Option[Statement] = cToken match {
     case Some(Token(LET, _))    => parseLetStatement()
     case Some(Token(RETURN, _)) => parseReturnStatement()
+    case Some(Token(LBRACE, _)) =>
+      println("Aqui")
+      parseBagugaStatement()
     case _ =>
       parseExpressionsStatement()
   }
 
+  def parseBagugaStatement(): Option[BagugaStatement] = {
+    logger.info("On baguga statement")
+    val token = cToken
+    token match {
+      case Some(token) if token.tokenType == LBRACE =>
+        println("Statement hm")
+        nextTokens()
+        var statements = Seq.empty[Statement]
+        while (cToken.getOrElse(EOFToken).tokenType match {
+                 case TokenType.RBRACE => false
+                 case TokenType.EOF    => false
+                 case _                => true
+               }) {
+          statements ++= Seq(parseStatement()).flatten
+          nextTokens()
+        }
+        logger.info(s"$pToken")
+        pToken match {
+          case Some(token) if token.tokenType == TokenType.MAS =>
+            nextTokens()
+            pToken match {
+              case Some(token) if token.tokenType == TokenType.ANTES =>
+                nextTokens()
+                nextTokens()
+                logger.info(s"$pToken")
+                println("recursive baguga")
+                parseBagugaStatement() match {
+                  case Some(statement) =>
+                    statements = statements :+ statement
+                    nextTokens()
+                    Some(
+                      BagugaStatement(
+                        Token(TokenType.BAGUGA, "baguga"),
+                        statements
+                      )
+                    )
+                  case None => None
+                }
+              case _ =>
+                None
+            }
+          case Some(token) if token.tokenType == TokenType.BAGUGA =>
+            println("statements before baguga")
+            nextTokens()
+            Some(BagugaStatement(token, statements))
+          case _ =>
+            None
+        }
+      case _ => None
+    }
+  }
   def parseBlockStatement(): Option[BlockStatement] = {
     val token = cToken
-    logger.debug(s"Parsing block statement, first token is $token")
     token match {
       case Some(token) if token.tokenType == LBRACE =>
         nextTokens()
         var statements = Seq.empty[Statement]
-        while (
-          cToken.getOrElse(EOFToken).tokenType match {
-            case TokenType.RBRACE => false
-            case TokenType.EOF    => false
-            case _                => true
-          }
-        ) {
+        while (cToken.getOrElse(EOFToken).tokenType match {
+                 case TokenType.RBRACE => false
+                 case TokenType.EOF    => false
+                 case _                => true
+               }) {
           statements ++= Seq(parseStatement()).flatten
           nextTokens()
         }

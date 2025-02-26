@@ -6,7 +6,13 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.matchers.must.Matchers.{a, have}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import parser.ast.Statement
-import parser.ast.expressions.{Identifier, InfixExpression, IntegerLiteral, PrefixExpression, StringLiteral}
+import parser.ast.expressions.{
+  Identifier,
+  InfixExpression,
+  IntegerLiteral,
+  PrefixExpression,
+  StringLiteral
+}
 import parser.ast.statements.ExpressionStatement
 import token.{Token, TokenType}
 import token.TokenType._
@@ -24,10 +30,11 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
       (Token(INT, "5"), Token(SEMICOLON, ";")),
       (Token(SEMICOLON, ";"), Token(EOF, ""))
     )
-    expectedIterations.map { case (cExpected: Token, pExpected: Token) =>
-      parser.cToken shouldEqual Some(cExpected)
-      parser.pToken shouldEqual Some(pExpected)
-      parser.nextTokens()
+    expectedIterations.map {
+      case (cExpected: Token, pExpected: Token) =>
+        parser.cToken shouldEqual Some(cExpected)
+        parser.pToken shouldEqual Some(pExpected)
+        parser.nextTokens()
     }
   }
 
@@ -111,8 +118,14 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
 
   "ExpressionParser - array literals" should "Be correctly parsed" in {
     val input = "[1, 2, 3];"
-    testArrayLiteral(input, Seq(1, 2, 3).map(value => Token(TokenType.INT, value.toString)).map(t => IntegerLiteral(t, t.literal.toInt)))
-    testArrayLiteral("[\"hey\", 12];",
+    testArrayLiteral(
+      input,
+      Seq(1, 2, 3)
+        .map(value => Token(TokenType.INT, value.toString))
+        .map(t => IntegerLiteral(t, t.literal.toInt))
+    )
+    testArrayLiteral(
+      "[\"hey\", 12];",
       Seq(
         StringLiteral(Token(TokenType.STR, "\"hey\"")),
         IntegerLiteral(Token(TokenType.INT, "12"), 12)
@@ -166,11 +179,11 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
 
     prefixTests.foreach {
       case (
-        input: String,
-        leftValue: BigInt,
-        operator: String,
-        rightValue: BigInt
-        ) =>
+          input: String,
+          leftValue: BigInt,
+          operator: String,
+          rightValue: BigInt
+          ) =>
         val l = Lexer(input)
         val p = Parser(l)
         val program = p.parseProgram()
@@ -212,9 +225,9 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
 
     prefixTests.foreach {
       case (
-        input: String,
-        expected: String
-        ) =>
+          input: String,
+          expected: String
+          ) =>
         val l = Lexer(input)
         val p = Parser(l)
         val expression = p.parseProgram()
@@ -291,9 +304,9 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
 
     prefixTests.foreach {
       case (
-        input: String,
-        expected: String
-        ) =>
+          input: String,
+          expected: String
+          ) =>
         val l = Lexer(input)
         val p = Parser(l)
         val expression = p.parseProgram()
@@ -312,6 +325,16 @@ class ParserSpec extends AnyFlatSpec with ParserTestUtils {
     val program = p.parseProgram()
     p.errors shouldBe Matchers.empty
     program.string shouldEqual "if (x < y)  { x }"
+  }
+
+  "Baguga statements" should "be correctly parsed" in {
+    val input = "{ x + 1; y + 1; } mas antes { x + 1; } BAGUGA"
+    val l = Lexer(input)
+    val p = Parser(l)
+    val program = p.parseProgram()
+    p.errors shouldBe Matchers.empty
+    println(program.string)
+    program.string shouldEqual "(x + 1);(y + 1), mas antes ☝\uFE0F(x + 1), mas antes ☝\uFE0F"
   }
 
   "IfElse Expressions" should "be correctly parsed" in {
