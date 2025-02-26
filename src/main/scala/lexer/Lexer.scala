@@ -25,8 +25,14 @@ case class Lexer(input: String, position: Int = -1, ch: Byte = 0)
 
   def readString: (String, Lexer) = {
     if ((nextChar != '\"' || (nextChar == '\"' && ch.toChar == '\\')) && ch != 0) {
-      val (string, nextLexer) = next.readString
-      (ch.toChar.toString ++ string, nextLexer)
+      (ch.toChar, nextChar) match {
+        case ('\\', 'n') =>
+          val (string, nextLexer) = next.readString
+          ('\n'.toString ++ string, nextLexer)
+        case _ =>
+          val (string, nextLexer) = next.readString
+          (ch.toChar.toString ++ string, nextLexer)
+      }
     } else {
       (ch.toChar.toString ++ "\"", next)
     }
@@ -73,7 +79,7 @@ case class Lexer(input: String, position: Int = -1, ch: Byte = 0)
           val (identifier: String, nextLexer: Lexer) = readString
           (
             Some(
-              Token(TokenType.STR, identifier)
+              Token(TokenType.STR, identifier.replace("\nn", "\n"))
             ),
             nextLexer.next
           )

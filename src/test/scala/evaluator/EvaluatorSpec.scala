@@ -164,12 +164,13 @@ class EvaluatorSpec extends AnyFlatSpec with EvaluatorMatchers {
   }
 
   "Builtin Functions" should "run" in {
-    "print(10)" should beEqualTo(value = None)
+    "print(10, \"\n\")" should beEqualTo(value = None)
+
     """
       |let c = 10;
       |while (c > 0) {
       | let c = c - 1;
-      | print(c, " ");
+      | print(c, "\n");
       |};
       |""".stripMargin should beEqualTo(value = None)
   }

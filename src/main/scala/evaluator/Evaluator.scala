@@ -1,7 +1,7 @@
 package evaluator
 
 import com.typesafe.scalalogging.Logger
-import evaluator.builtin.PrintFn
+import evaluator.builtin.{PrintFn, fns}
 import evaluator.objects.BooleanObject.{False, True}
 import evaluator.objects._
 import parser.ast.expressions._
@@ -11,10 +11,7 @@ import parser.ast.{Expression, Node, Program, Statement}
 case class Evaluator(initialContext: String) {
 
   val logger: Logger = Logger(Evaluator.getClass)
-  val builtinFns: Seq[BuiltinFunctionObject] = Seq(
-    PrintFn
-  )
-  val environment: Environment = Environment(builtinFns, initialContext)
+  val environment: Environment = Environment(fns, initialContext)
 
   var error: Option[ErrorObject] = None
 
