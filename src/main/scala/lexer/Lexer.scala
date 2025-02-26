@@ -5,12 +5,12 @@ import token.{Token, TokenType}
 
 import scala.annotation.tailrec
 
-case class Lexer(input: String, position: Int = -1, ch: Byte = 0)
+case class Lexer(input: String, position: Int = -1, ch: Char = 0)
     extends CharIdentification {
 
   def nextPosition: Int = position + 1
-  def nextChar: Byte = {
-    if (nextPosition >= input.length) 0 else input(nextPosition).toByte
+  def nextChar: Char = {
+    if (nextPosition >= input.length) 0 else input(nextPosition)
   }
   final def next: Lexer = Lexer(input, nextPosition, nextChar)
 
